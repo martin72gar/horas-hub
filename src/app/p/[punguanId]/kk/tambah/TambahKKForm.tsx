@@ -6,8 +6,14 @@ import { Plus, Trash2, Save } from "lucide-react";
 import { createKK } from "./action";
 
 export default function TambahKKForm({ punguanId }: { punguanId: string }) {
-  const [anggota, setAnggota] = useState([
-    { relation: "ISTRI", fullName: "", gender: "P" as "P" | "L" }
+  const [anggota, setAnggota] = useState<{
+    relation: string;
+    fullName: string;
+    gender: "L" | "P";
+    pomparan?: string;
+    nomorKeturunan?: string;
+  }[]>([
+    { relation: "ISTRI", fullName: "", gender: "P" }
   ]);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);

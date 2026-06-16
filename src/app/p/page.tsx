@@ -2,6 +2,8 @@ import { getUserPunguans } from "@/lib/dal";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+export const runtime = "edge";
+
 export default async function PunguanSelectionPage() {
   const punguans = await getUserPunguans();
 

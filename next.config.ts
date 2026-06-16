@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  webpack: (config, { isServer, nextRuntime, webpack }) => {
+    if (isServer && nextRuntime === "edge") {
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^ws$/,
+        })
+      );
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

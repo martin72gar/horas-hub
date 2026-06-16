@@ -9,6 +9,8 @@ import { redirect } from "next/navigation";
 import { LayoutDashboard, Users, CreditCard, Gift, Megaphone, FileText, Settings, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
+export const runtime = "edge";
+
 export default async function PunguanLayout({
   children,
   params,

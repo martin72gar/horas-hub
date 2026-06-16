@@ -67,7 +67,7 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
             <input name="pomparan" defaultValue={kk.pomparan || ''} className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md" />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-stone-700">Nomor Keturunan</label>
+            <label className="text-sm font-medium text-stone-700">No. Pomparan/Ke</label>
             <input type="number" name="nomorKeturunan" defaultValue={kk.nomorKeturunan || ''} className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md" />
           </div>
           <div className="space-y-1.5">
@@ -88,17 +88,17 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
           Anggota Keluarga (Opsional)
         </h3>
         {anggota.map((a, i) => (
-          <div key={i} className="flex flex-col md:flex-row gap-4 items-start md:items-center bg-stone-50 p-4 rounded-xl border border-stone-200">
-            <div className="flex-1 space-y-1.5 w-full">
+          <div key={i} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-stone-50 p-4 rounded-xl border border-stone-200">
+            <div className="space-y-1.5 w-full md:col-span-3">
               <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">Nama Anggota</label>
               <input
                 value={a.fullName}
                 onChange={(e) => handleAnggotaChange(i, "fullName", e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md"
+                className="w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md bg-white"
                 placeholder="Nama Lengkap"
               />
             </div>
-            <div className="w-full md:w-1/4 space-y-1.5">
+            <div className="w-full space-y-1.5 md:col-span-2">
               <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">Hubungan</label>
               <select
                 value={a.relation}
@@ -110,7 +110,7 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
                 <option value="LAINNYA">Lainnya</option>
               </select>
             </div>
-            <div className="w-full md:w-[15%] space-y-1.5">
+            <div className="w-full space-y-1.5 md:col-span-2">
               <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">Gender</label>
               <select
                 value={a.gender}
@@ -121,7 +121,26 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
                 <option value="P">P</option>
               </select>
             </div>
-            <div className="pt-6 flex justify-end w-full md:w-auto">
+            <div className="w-full space-y-1.5 md:col-span-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">Pomparan</label>
+              <input 
+                value={a.pomparan || ''} 
+                onChange={(e) => handleAnggotaChange(i, "pomparan", e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md bg-white" 
+                placeholder="Cth: Silo" 
+              />
+            </div>
+            <div className="w-full space-y-1.5 md:col-span-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">No. Pomp/Ke</label>
+              <input 
+                type="number"
+                value={a.nomorKeturunan || ''} 
+                onChange={(e) => handleAnggotaChange(i, "nomorKeturunan", e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md bg-white" 
+                placeholder="Cth: 17" 
+              />
+            </div>
+            <div className="flex justify-end w-full md:col-span-1 pb-1">
               <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveAnggota(i)} className="text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full h-9 w-9">
                 <Trash2 className="h-4 w-4" />
               </Button>

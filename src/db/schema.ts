@@ -66,6 +66,8 @@ export const members = pgTable("members", {
   punguanId: uuid("punguan_id").notNull().references(() => punguans.id, { onDelete: "cascade" }),
   fullName: varchar("full_name", { length: 255 }).notNull(),
   relation: memberRelationEnum("relation").notNull(),
+  pomparan: varchar("pomparan", { length: 100 }),
+  nomorKeturunan: integer("nomor_keturunan"),
   birthDate: date("birth_date"),
   gender: memberGenderEnum("gender"),
   phone: varchar("phone", { length: 50 }),

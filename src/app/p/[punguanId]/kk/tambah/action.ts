@@ -44,19 +44,33 @@ export async function createKK(punguanId: string, formData: FormData, anggota: a
         fullName: headName,
         relation: "KEPALA",
         gender: "L", // Assume L by default for KEPALA in MVP
+        pomparan: pomparan || null,
+        nomorKeturunan,
       });
 
       // Insert other valid members
       const validAnggota = anggota.filter(a => a.fullName && a.fullName.trim() !== "");
       if (validAnggota.length > 0) {
         await tx.insert(members).values(
-          validAnggota.map(a => ({
-            householdId: kk.id,
-            punguanId,
-            fullName: a.fullName,
-            relation: a.relation,
-            gender: a.gender,
-          }))
+          validAnggota.map(a => {
+            let mPomparan = a.pomparan?.trim() || null;
+            let mNomor = a.nomorKeturunan ? parseInt(a.nomorKeturunan, 10) : null;
+            
+            if (a.relation === "ANAK" && !mPomparan && !mNomor) {
+              mPomparan = pomparan || null;
+              mNomor = nomorKeturunan ? nomorKeturunan + 1 : null;
+            }
+
+            return {
+              householdId: kk.id,
+              punguanId,
+              fullName: a.fullName,
+              relation: a.relation,
+              gender: a.gender,
+              pomparan: mPomparan,
+              nomorKeturunan: mNomor,
+            };
+          })
         );
       }
     });

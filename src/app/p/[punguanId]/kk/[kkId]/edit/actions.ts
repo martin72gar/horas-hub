@@ -34,7 +34,7 @@ export async function updateKK(punguanId: string, kkId: string, formData: FormDa
 
       // Update KEPALA relation name
       await tx.update(members)
-        .set({ fullName: headName })
+        .set({ fullName: headName, pomparan: pomparan || null, nomorKeturunan })
         .where(and(eq(members.householdId, kkId), eq(members.relation, 'KEPALA')));
 
       // Delete non-KEPALA members
@@ -45,13 +45,25 @@ export async function updateKK(punguanId: string, kkId: string, formData: FormDa
       const validAnggota = anggota.filter(a => a.fullName && a.fullName.trim() !== "");
       if (validAnggota.length > 0) {
         await tx.insert(members).values(
-          validAnggota.map(a => ({
-            householdId: kkId,
-            punguanId,
-            fullName: a.fullName,
-            relation: a.relation,
-            gender: a.gender,
-          }))
+          validAnggota.map(a => {
+            let mPomparan = a.pomparan?.trim() || null;
+            let mNomor = a.nomorKeturunan ? parseInt(a.nomorKeturunan, 10) : null;
+            
+            if (a.relation === "ANAK" && !mPomparan && !mNomor) {
+              mPomparan = pomparan || null;
+              mNomor = nomorKeturunan ? nomorKeturunan + 1 : null;
+            }
+
+            return {
+              householdId: kkId,
+              punguanId,
+              fullName: a.fullName,
+              relation: a.relation,
+              gender: a.gender,
+              pomparan: mPomparan,
+              nomorKeturunan: mNomor,
+            };
+          })
         );
       }
     });

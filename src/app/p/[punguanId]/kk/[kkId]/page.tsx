@@ -102,6 +102,7 @@ export default async function DetailKKPage({ params }: { params: Promise<{ pungu
                   <thead className="text-xs text-stone-600 bg-stone-100/50 border-b border-stone-200 uppercase font-semibold">
                     <tr>
                       <th className="px-6 py-3">Nama Lengkap</th>
+                      <th className="px-6 py-3">Pomparan</th>
                       <th className="px-6 py-3">Hubungan</th>
                       <th className="px-6 py-3 text-center">L/P</th>
                     </tr>
@@ -110,6 +111,9 @@ export default async function DetailKKPage({ params }: { params: Promise<{ pungu
                     {keluargaList.map(anggota => (
                       <tr key={anggota.id} className="hover:bg-stone-50 transition-colors">
                         <td className="px-6 py-4 font-medium text-stone-900">{anggota.fullName}</td>
+                        <td className="px-6 py-4 text-stone-600 whitespace-nowrap">
+                          {anggota.pomparan || '-'} {anggota.nomorKeturunan ? `(No. ${anggota.nomorKeturunan})` : ''}
+                        </td>
                         <td className="px-6 py-4 text-stone-600">
                           <Badge variant="outline" className={anggota.relation === 'KEPALA' ? 'border-red-200 text-red-800 bg-red-50' : 'bg-stone-50'}>
                             {anggota.relation}

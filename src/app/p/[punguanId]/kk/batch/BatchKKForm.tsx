@@ -72,10 +72,10 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
               <th className="px-4 py-3 w-10 text-center">#</th>
               <th className="px-4 py-3 min-w-[200px]">Nama KK <span className="text-red-500">*</span></th>
               <th className="px-4 py-3 min-w-[150px]">Panggoaran</th>
-              <th className="px-4 py-3 min-w-[150px]">Sektor</th>
               <th className="px-4 py-3 min-w-[150px]">Pomparan</th>
-              <th className="px-4 py-3 min-w-[120px]">No. Ket</th>
+              <th className="px-4 py-3 min-w-[120px]">No. Pomp/Ke</th>
               <th className="px-4 py-3 min-w-[200px]">Nama Istri</th>
+              <th className="px-4 py-3 min-w-[150px]">Sektor</th>
               <th className="px-4 py-3 min-w-[150px]">No. Handphone</th>
               <th className="px-4 py-3 min-w-[250px]">Alamat</th>
               <th className="px-4 py-3 w-12 text-center"></th>
@@ -103,14 +103,6 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
                 </td>
                 <td className="px-2 py-2">
                   <input
-                    value={row.sektor}
-                    onChange={e => handleRowChange(i, 'sektor', e.target.value)}
-                    className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
-                    placeholder="Cilincing"
-                  />
-                </td>
-                <td className="px-2 py-2">
-                  <input
                     value={row.pomparan}
                     onChange={e => handleRowChange(i, 'pomparan', e.target.value)}
                     className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
@@ -132,6 +124,14 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
                     onChange={e => handleRowChange(i, 'wifeName', e.target.value)}
                     className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
                     placeholder="Tiurmauli br. Tampubolon"
+                  />
+                </td>
+                <td className="px-2 py-2">
+                  <input
+                    value={row.sektor}
+                    onChange={e => handleRowChange(i, 'sektor', e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
+                    placeholder="Cilincing"
                   />
                 </td>
                 <td className="px-2 py-2">

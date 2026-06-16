@@ -4,7 +4,7 @@ import { households, members } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Phone, MapPin } from "lucide-react";
+import { ArrowLeft, User, Phone, MapPin, Edit } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
@@ -33,9 +33,16 @@ export default async function DetailKKPage({ params }: { params: Promise<{ pungu
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <div>
-          <h2 className="text-2xl font-bold text-stone-800 tracking-tight font-serif">Detail Keluarga</h2>
-          <p className="text-stone-500 mt-1">Informasi lengkap KK {kk.headName}</p>
+        <div className="flex-1 flex justify-between items-center w-full">
+          <div>
+            <h2 className="text-2xl font-bold text-stone-800 tracking-tight font-serif">Detail Keluarga</h2>
+            <p className="text-stone-500 mt-1">Informasi lengkap KK {kk.headName}</p>
+          </div>
+          <Link href={`/p/${punguanId}/kk/${kk.id}/edit`}>
+            <Button className="bg-stone-800 hover:bg-stone-900 text-white">
+              <Edit className="h-4 w-4 mr-2" /> Edit Data
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -47,7 +54,7 @@ export default async function DetailKKPage({ params }: { params: Promise<{ pungu
                <div>
                  <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Kepala Keluarga</p>
                  <div className="flex items-center text-stone-800 font-medium">
-                   <User className="h-4 w-4 mr-2 text-red-700" /> {kk.headName}
+                   <User className="h-4 w-4 mr-2 text-red-700" /> {kk.headName} {kk.panggoaran ? `(${kk.panggoaran})` : ''}
                  </div>
                </div>
                <div>

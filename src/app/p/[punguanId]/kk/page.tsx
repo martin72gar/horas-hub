@@ -27,6 +27,16 @@ export default async function KKPage({ params }: { params: Promise<{ punguanId: 
   .where(eq(households.punguanId, punguanId));
 
   const kkList = kkListRaw.map(kk => {
+    let formattedHeadName = kk.headName;
+    if (kk.headName) {
+      const parts = kk.headName.trim().split(/\s+/);
+      if (parts.length > 1) {
+        const marga = parts.pop();
+        const initials = parts.map(p => p.charAt(0).toUpperCase() + ".").join(" ");
+        formattedHeadName = `${initials} ${marga}`;
+      }
+    }
+
     let wifePart = "";
     if (kk.wifeName) {
       const wifeLower = kk.wifeName.toLowerCase();
@@ -40,7 +50,7 @@ export default async function KKPage({ params }: { params: Promise<{ punguanId: 
       if (extractIdx !== -1) {
         wifePart = "/" + kk.wifeName.substring(extractIdx).trim();
       } else {
-        const words = kk.wifeName.trim().split(" ");
+        const words = kk.wifeName.trim().split(/\s+/);
         const lastWord = words[words.length - 1];
         wifePart = `/br. ${lastWord}`;
       }
@@ -53,7 +63,7 @@ export default async function KKPage({ params }: { params: Promise<{ punguanId: 
 
     return {
       ...kk,
-      formattedName: `${kk.headName}${wifePart}${panggPart}`
+      formattedName: `${formattedHeadName}${wifePart}${panggPart}`
     };
   });
 
@@ -65,11 +75,18 @@ export default async function KKPage({ params }: { params: Promise<{ punguanId: 
           <p className="text-stone-500 mt-1">Kelola data keluarga anggota Punguan Anda.</p>
         </div>
         {(role === 'SEKRETARIS' || role === 'SUPERADMIN') && (
-          <Link href={`/p/${punguanId}/kk/tambah`}>
-            <Button className="bg-red-800 hover:bg-red-900 text-white shadow-sm">
-              <PlusCircle className="mr-2 h-4 w-4" /> Tambah KK Baru
-            </Button>
-          </Link>
+          <div className="flex gap-3">
+            <Link href={`/p/${punguanId}/kk/batch`}>
+              <Button variant="outline" className="bg-white border-stone-300 text-stone-700 hover:bg-stone-50 shadow-sm">
+                <PlusCircle className="mr-2 h-4 w-4" /> Tambah Batch
+              </Button>
+            </Link>
+            <Link href={`/p/${punguanId}/kk/tambah`}>
+              <Button className="bg-red-800 hover:bg-red-900 text-white shadow-sm">
+                <PlusCircle className="mr-2 h-4 w-4" /> Tambah KK
+              </Button>
+            </Link>
+          </div>
         )}
       </div>
 

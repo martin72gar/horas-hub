@@ -1,6 +1,7 @@
 import { getUserPunguans } from "@/lib/dal";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import Logo from "@/components/Logo";
 
 export const runtime = "edge";
 
@@ -15,7 +16,10 @@ export default async function PunguanSelectionPage() {
   return (
     <div className="min-h-screen bg-stone-50 p-8">
       <div className="max-w-4xl mx-auto pt-10">
-        <h1 className="text-3xl font-bold text-stone-800 mb-2 font-serif">HorasHub</h1>
+        <div className="flex items-center space-x-3 mb-2">
+          <Logo size={44} className="flex-shrink-0" />
+          <h1 className="text-3xl font-bold text-stone-800 font-serif">HorasHub</h1>
+        </div>
         <p className="text-stone-600 mb-10">Silakan pilih Punguan yang ingin Anda kelola.</p>
         
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

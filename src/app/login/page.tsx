@@ -2,6 +2,7 @@
 
 import { useActionState } from "react"
 import { authenticate } from "./actions"
+import Logo from "@/components/Logo"
 
 export default function LoginPage() {
   const [errorMessage, formAction, isPending] = useActionState(
@@ -12,6 +13,9 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-stone-50">
       <div className="p-8 bg-white rounded-xl shadow-lg w-full max-w-md border-t-4 border-red-800">
+        <div className="flex justify-center mb-4">
+          <Logo size={64} />
+        </div>
         <h1 className="text-3xl font-bold text-center text-red-900 mb-2 font-serif">HorasHub</h1>
         <p className="text-center text-stone-500 mb-8">Portal Administrasi Punguan</p>
         <form

@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { LayoutDashboard, Users, CreditCard, Gift, Megaphone, FileText, Settings, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Logo from "@/components/Logo";
 
 export const runtime = "edge";
 
@@ -62,8 +63,11 @@ export default async function PunguanLayout({
                <circle cx="50" cy="50" r="20" stroke="#FFFFFF" strokeWidth="2" fill="none"/>
             </svg>
           </div>
-          <h2 className="text-2xl font-bold font-serif text-white relative z-10">HorasHub</h2>
-          <p className="text-stone-400 text-sm mt-1 truncate relative z-10">{punguan.name}</p>
+          <div className="flex items-center space-x-3 relative z-10">
+            <Logo size={32} className="flex-shrink-0" />
+            <h2 className="text-2xl font-bold font-serif text-white relative z-10">HorasHub</h2>
+          </div>
+          <p className="text-stone-400 text-sm mt-2 truncate relative z-10">{punguan.name}</p>
           <div className="mt-3 inline-block px-2.5 py-1 bg-red-900/80 text-xs font-semibold tracking-wider rounded text-red-100 border border-red-800 relative z-10">
             ROLE: {role}
           </div>

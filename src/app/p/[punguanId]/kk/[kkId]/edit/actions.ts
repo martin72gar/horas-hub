@@ -18,6 +18,10 @@ export async function updateKK(punguanId: string, kkId: string, formData: FormDa
     const panggoaran = formData.get("panggoaran") as string;
     const phone = formData.get("phone") as string;
     const address = formData.get("address") as string;
+    const sektor = formData.get("sektor") as string;
+    const pomparan = formData.get("pomparan") as string;
+    const nomorKeturunanStr = formData.get("nomorKeturunan") as string;
+    const nomorKeturunan = nomorKeturunanStr ? parseInt(nomorKeturunanStr, 10) : null;
 
     if (!headName) return { error: "Nama Kepala Keluarga wajib diisi." };
 
@@ -25,7 +29,7 @@ export async function updateKK(punguanId: string, kkId: string, formData: FormDa
     await db.transaction(async (tx) => {
       // Update KK
       await tx.update(households)
-        .set({ headName, panggoaran, phone, address, updatedAt: new Date() })
+        .set({ headName, panggoaran, phone, address, sektor: sektor || null, pomparan: pomparan || null, nomorKeturunan, updatedAt: new Date() })
         .where(and(eq(households.id, kkId), eq(households.punguanId, punguanId)));
 
       // Update KEPALA relation name

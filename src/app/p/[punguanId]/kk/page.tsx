@@ -17,6 +17,9 @@ export default async function KKPage({ params }: { params: Promise<{ punguanId: 
     id: households.id,
     headName: households.headName,
     panggoaran: households.panggoaran,
+    sektor: households.sektor,
+    pomparan: households.pomparan,
+    nomorKeturunan: households.nomorKeturunan,
     phone: households.phone,
     address: households.address,
     status: households.status,
@@ -106,6 +109,8 @@ export default async function KKPage({ params }: { params: Promise<{ punguanId: 
             <thead className="text-xs text-stone-600 bg-stone-100/80 border-b border-stone-200 uppercase font-semibold">
               <tr>
                 <th className="px-6 py-4">Nama Kepala Keluarga</th>
+                <th className="px-6 py-4">Sektor</th>
+                <th className="px-6 py-4">Pomparan</th>
                 <th className="px-6 py-4">No. HP</th>
                 <th className="px-6 py-4">Alamat</th>
                 <th className="px-6 py-4">Status</th>
@@ -115,7 +120,7 @@ export default async function KKPage({ params }: { params: Promise<{ punguanId: 
             <tbody className="divide-y divide-stone-200">
               {kkList.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-stone-500">
+                  <td colSpan={7} className="px-6 py-8 text-center text-stone-500">
                     Belum ada data KK.
                   </td>
                 </tr>
@@ -123,6 +128,8 @@ export default async function KKPage({ params }: { params: Promise<{ punguanId: 
                 kkList.map((kk) => (
                   <tr key={kk.id} className="hover:bg-stone-50 transition-colors">
                     <td className="px-6 py-4 font-medium text-stone-900">{kk.formattedName}</td>
+                    <td className="px-6 py-4 text-stone-600">{kk.sektor || '-'}</td>
+                    <td className="px-6 py-4 text-stone-600">{kk.pomparan || '-'} {kk.nomorKeturunan ? `(No.${kk.nomorKeturunan})` : ''}</td>
                     <td className="px-6 py-4 text-stone-600">{kk.phone || '-'}</td>
                     <td className="px-6 py-4 text-stone-600 truncate max-w-xs">{kk.address || '-'}</td>
                     <td className="px-6 py-4">

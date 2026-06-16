@@ -17,6 +17,10 @@ export async function createKK(punguanId: string, formData: FormData, anggota: a
     const panggoaran = formData.get("panggoaran") as string;
     const phone = formData.get("phone") as string;
     const address = formData.get("address") as string;
+    const sektor = formData.get("sektor") as string;
+    const pomparan = formData.get("pomparan") as string;
+    const nomorKeturunanStr = formData.get("nomorKeturunan") as string;
+    const nomorKeturunan = nomorKeturunanStr ? parseInt(nomorKeturunanStr, 10) : null;
 
     if (!headName) return { error: "Nama Kepala Keluarga wajib diisi." };
 
@@ -28,6 +32,9 @@ export async function createKK(punguanId: string, formData: FormData, anggota: a
         panggoaran,
         phone,
         address,
+        sektor: sektor || null,
+        pomparan: pomparan || null,
+        nomorKeturunan,
       }).returning();
 
       // Insert Kepala Keluarga explicitly into members table

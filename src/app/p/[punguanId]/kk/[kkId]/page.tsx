@@ -4,7 +4,7 @@ import { households, members } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Phone, MapPin, Edit } from "lucide-react";
+import { ArrowLeft, User, Phone, MapPin, Edit, Map, Users } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
@@ -55,6 +55,18 @@ export default async function DetailKKPage({ params }: { params: Promise<{ pungu
                  <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Kepala Keluarga</p>
                  <div className="flex items-center text-stone-800 font-medium">
                    <User className="h-4 w-4 mr-2 text-red-700" /> {kk.headName} {kk.panggoaran ? `(${kk.panggoaran})` : ''}
+                 </div>
+               </div>
+               <div>
+                 <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Pomparan</p>
+                 <div className="flex items-center text-stone-800">
+                   <Users className="h-4 w-4 mr-2 text-red-700" /> {kk.pomparan || '-'} {kk.nomorKeturunan ? `(No. ${kk.nomorKeturunan})` : ''}
+                 </div>
+               </div>
+               <div>
+                 <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Sektor</p>
+                 <div className="flex items-center text-stone-800">
+                   <Map className="h-4 w-4 mr-2 text-red-700" /> {kk.sektor || '-'}
                  </div>
                </div>
                <div>

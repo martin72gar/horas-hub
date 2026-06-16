@@ -26,6 +26,9 @@ export async function createBatchKK(punguanId: string, rows: any[]) {
           punguanId,
           headName,
           panggoaran: row.panggoaran?.trim() || null,
+          sektor: row.sektor?.trim() || null,
+          pomparan: row.pomparan?.trim() || null,
+          nomorKeturunan: row.nomorKeturunan ? parseInt(row.nomorKeturunan, 10) : null,
           phone: row.phone?.trim() || null,
           address: row.address?.trim() || null,
         }).returning();

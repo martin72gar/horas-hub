@@ -10,15 +10,15 @@ import { useRouter } from "next/navigation";
 export default function BatchKKForm({ punguanId }: { punguanId: string }) {
   const router = useRouter();
   const [rows, setRows] = useState([
-    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "" },
-    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "" },
-    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "" },
+    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "" },
+    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "" },
+    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "" },
   ]);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleAddRow = () => {
-    setRows([...rows, { headName: "", panggoaran: "", phone: "", address: "", wifeName: "" }]);
+    setRows([...rows, { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "" }]);
   };
 
   const handleRemoveRow = (index: number) => {
@@ -40,7 +40,7 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
   const handleSubmit = async () => {
     // Filter rows that have at least a headName
     const validRows = rows.filter(r => r.headName.trim() !== "");
-    
+
     if (validRows.length === 0) {
       setError("Isi minimal satu baris Kepala Keluarga.");
       return;
@@ -48,7 +48,7 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
 
     setIsPending(true);
     setError(null);
-    
+
     try {
       const result = await createBatchKK(punguanId, validRows);
       if (result?.error) {
@@ -72,9 +72,12 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
               <th className="px-4 py-3 w-10 text-center">#</th>
               <th className="px-4 py-3 min-w-[200px]">Nama KK <span className="text-red-500">*</span></th>
               <th className="px-4 py-3 min-w-[150px]">Panggoaran</th>
+              <th className="px-4 py-3 min-w-[150px]">Sektor</th>
+              <th className="px-4 py-3 min-w-[150px]">Pomparan</th>
+              <th className="px-4 py-3 min-w-[120px]">No. Ket</th>
+              <th className="px-4 py-3 min-w-[200px]">Nama Istri</th>
               <th className="px-4 py-3 min-w-[150px]">No. Handphone</th>
               <th className="px-4 py-3 min-w-[250px]">Alamat</th>
-              <th className="px-4 py-3 min-w-[200px]">Nama Istri</th>
               <th className="px-4 py-3 w-12 text-center"></th>
             </tr>
           </thead>
@@ -83,7 +86,7 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
               <tr key={i} className="hover:bg-stone-50 group">
                 <td className="px-4 py-2 text-center text-stone-400">{i + 1}</td>
                 <td className="px-2 py-2">
-                  <input 
+                  <input
                     value={row.headName}
                     onChange={e => handleRowChange(i, 'headName', e.target.value)}
                     className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
@@ -91,7 +94,7 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
                   />
                 </td>
                 <td className="px-2 py-2">
-                  <input 
+                  <input
                     value={row.panggoaran}
                     onChange={e => handleRowChange(i, 'panggoaran', e.target.value)}
                     className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
@@ -99,7 +102,40 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
                   />
                 </td>
                 <td className="px-2 py-2">
-                  <input 
+                  <input
+                    value={row.sektor}
+                    onChange={e => handleRowChange(i, 'sektor', e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
+                    placeholder="Cilincing"
+                  />
+                </td>
+                <td className="px-2 py-2">
+                  <input
+                    value={row.pomparan}
+                    onChange={e => handleRowChange(i, 'pomparan', e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
+                    placeholder="Silo"
+                  />
+                </td>
+                <td className="px-2 py-2">
+                  <input
+                    type="number"
+                    value={row.nomorKeturunan}
+                    onChange={e => handleRowChange(i, 'nomorKeturunan', e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
+                    placeholder="17"
+                  />
+                </td>
+                <td className="px-2 py-2">
+                  <input
+                    value={row.wifeName}
+                    onChange={e => handleRowChange(i, 'wifeName', e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
+                    placeholder="Tiurmauli br. Tampubolon"
+                  />
+                </td>
+                <td className="px-2 py-2">
+                  <input
                     value={row.phone}
                     onChange={e => handleRowChange(i, 'phone', e.target.value)}
                     className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
@@ -107,23 +143,15 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
                   />
                 </td>
                 <td className="px-2 py-2">
-                  <input 
+                  <input
                     value={row.address}
                     onChange={e => handleRowChange(i, 'address', e.target.value)}
                     className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
                     placeholder="Alamat lengkap..."
                   />
                 </td>
-                <td className="px-2 py-2">
-                  <input 
-                    value={row.wifeName}
-                    onChange={e => handleRowChange(i, 'wifeName', e.target.value)}
-                    className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
-                    placeholder="Tiurmauli br. Tampubolon"
-                  />
-                </td>
                 <td className="px-2 py-2 text-center">
-                  <button 
+                  <button
                     onClick={() => handleRemoveRow(i)}
                     className="text-stone-300 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100 p-1"
                     title="Hapus baris"

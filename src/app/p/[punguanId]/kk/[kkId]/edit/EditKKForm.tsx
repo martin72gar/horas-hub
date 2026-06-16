@@ -31,10 +31,10 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
     e.preventDefault();
     setIsPending(true);
     setError(null);
-    
+
     const formData = new FormData(e.currentTarget);
     const result = await updateKK(punguanId, kk.id, formData, anggota);
-    
+
     if (result?.error) {
       setError(result.error);
       setIsPending(false);
@@ -59,6 +59,18 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
             <input name="panggoaran" defaultValue={kk.panggoaran || ''} className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md" />
           </div>
           <div className="space-y-1.5">
+            <label className="text-sm font-medium text-stone-700">Sektor</label>
+            <input name="sektor" defaultValue={kk.sektor || ''} className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md" />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-stone-700">Pomparan</label>
+            <input name="pomparan" defaultValue={kk.pomparan || ''} className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md" />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-stone-700">Nomor Keturunan</label>
+            <input type="number" name="nomorKeturunan" defaultValue={kk.nomorKeturunan || ''} className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md" />
+          </div>
+          <div className="space-y-1.5">
             <label className="text-sm font-medium text-stone-700">No. Handphone</label>
             <input name="phone" defaultValue={kk.phone || ''} className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md" />
           </div>
@@ -79,16 +91,16 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
           <div key={i} className="flex flex-col md:flex-row gap-4 items-start md:items-center bg-stone-50 p-4 rounded-xl border border-stone-200">
             <div className="flex-1 space-y-1.5 w-full">
               <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">Nama Anggota</label>
-              <input 
-                value={a.fullName} 
+              <input
+                value={a.fullName}
                 onChange={(e) => handleAnggotaChange(i, "fullName", e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md" 
-                placeholder="Nama Lengkap" 
+                className="w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md"
+                placeholder="Nama Lengkap"
               />
             </div>
             <div className="w-full md:w-1/4 space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">Hubungan</label>
-              <select 
+              <select
                 value={a.relation}
                 onChange={(e) => handleAnggotaChange(i, "relation", e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md bg-white"
@@ -100,7 +112,7 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
             </div>
             <div className="w-full md:w-[15%] space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">Gender</label>
-              <select 
+              <select
                 value={a.gender}
                 onChange={(e) => handleAnggotaChange(i, "gender", e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md bg-white"

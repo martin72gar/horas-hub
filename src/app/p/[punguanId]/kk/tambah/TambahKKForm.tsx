@@ -61,6 +61,18 @@ export default function TambahKKForm({ punguanId }: { punguanId: string }) {
             <label className="text-sm font-medium text-stone-700">No. Handphone</label>
             <input name="phone" className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-md" placeholder="Contoh: 081234567890" />
           </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-stone-700">Sektor</label>
+            <input name="sektor" className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-md" placeholder="Contoh: Cilincing" />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-stone-700">Pomparan</label>
+            <input name="pomparan" className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-md" placeholder="Contoh: Silo" />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-stone-700">Nomor Keturunan</label>
+            <input type="number" name="nomorKeturunan" className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-md" placeholder="Contoh: 17" />
+          </div>
           <div className="space-y-1.5 md:col-span-2">
             <label className="text-sm font-medium text-stone-700">Alamat</label>
             <textarea name="address" rows={2} className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-red-500 focus:border-red-500 rounded-md" placeholder="Alamat domisili lengkap..." />

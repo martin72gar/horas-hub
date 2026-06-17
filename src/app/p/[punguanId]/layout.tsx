@@ -10,8 +10,6 @@ import { LayoutDashboard, Users, CreditCard, Gift, Megaphone, FileText, Settings
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Logo from "@/components/Logo";
 
-export const runtime = "edge";
-
 export default async function PunguanLayout({
   children,
   params,

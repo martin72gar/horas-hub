@@ -3,8 +3,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import Logo from "@/components/Logo";
 
-export const runtime = "edge";
-
 export default async function PunguanSelectionPage() {
   const punguans = await getUserPunguans();
 

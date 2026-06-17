@@ -21,6 +21,17 @@ export async function createBatchKK(punguanId: string, rows: any[]) {
         const headName = row.headName?.trim();
         if (!headName) continue;
 
+        let nomorKeturunanVal: number | null = null;
+        if (row.nomorKeturunan) {
+          const cleaned = String(row.nomorKeturunan).replace(/[^\d]/g, '');
+          if (cleaned) {
+            const parsed = parseInt(cleaned, 10);
+            if (!isNaN(parsed)) {
+              nomorKeturunanVal = parsed;
+            }
+          }
+        }
+
         // Insert KK
         const [kk] = await tx.insert(households).values({
           punguanId,
@@ -28,7 +39,7 @@ export async function createBatchKK(punguanId: string, rows: any[]) {
           panggoaran: row.panggoaran?.trim() || null,
           sektor: row.sektor?.trim() || null,
           pomparan: row.pomparan?.trim() || null,
-          nomorKeturunan: row.nomorKeturunan ? parseInt(row.nomorKeturunan, 10) : null,
+          nomorKeturunan: nomorKeturunanVal,
           phone: row.phone?.trim() || null,
           address: row.address?.trim() || null,
         }).returning();

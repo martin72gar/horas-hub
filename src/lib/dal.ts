@@ -3,6 +3,12 @@ import { db } from '@/db';
 import { households, members, punguans, punguanUsers, users } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { auth } from '@/auth';
+import type { Session } from 'next-auth';
+import { cache } from 'react';
+
+type AuthSession = Session | null;
+
+export const getCurrentSession = cache(async () => auth());
 
 /**
  * Memverifikasi apakah pengguna yang login memiliki akses ke Punguan ini.
@@ -10,7 +16,11 @@ import { auth } from '@/auth';
  * Mengembalikan role pengguna (KETUA, SEKRETARIS, BENDAHARA) jika bukan superadmin.
  */
 export async function verifyTenantAccess(punguanId: string) {
-  const session = await auth();
+  const session = await getCurrentSession();
+  return verifyTenantAccessForSession(punguanId, session);
+}
+
+export async function verifyTenantAccessForSession(punguanId: string, session: AuthSession) {
   if (!session?.user?.id) {
     throw new Error('Unauthorized');
   }
@@ -40,7 +50,7 @@ export async function verifyTenantAccess(punguanId: string) {
  * Mendapatkan daftar Punguan yang bisa diakses oleh user saat ini
  */
 export async function getUserPunguans() {
-  const session = await auth();
+  const session = await getCurrentSession();
   if (!session?.user?.id) return [];
 
   if ((session.user as any).isSuperadmin) {

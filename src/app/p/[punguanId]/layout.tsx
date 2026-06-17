@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import Link from "next/link";
-import { auth } from "@/auth";
-import { verifyTenantAccess } from "@/lib/dal";
+import { getCurrentSession, verifyTenantAccessForSession } from "@/lib/dal";
 import { db } from "@/db";
 import { punguans } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -19,7 +18,7 @@ export default async function PunguanLayout({
 }) {
   const resolvedParams = await params;
   const punguanId = resolvedParams.punguanId;
-  const session = await auth();
+  const session = await getCurrentSession();
 
   if (!session) {
     redirect("/login");
@@ -28,7 +27,7 @@ export default async function PunguanLayout({
   // Verify access and get role
   let role;
   try {
-    role = await verifyTenantAccess(punguanId);
+    role = await verifyTenantAccessForSession(punguanId, session);
   } catch (error) {
     redirect("/p");
   }
@@ -77,6 +76,7 @@ export default async function PunguanLayout({
               <li key={item.name}>
                 <Link
                   href={item.href}
+                  prefetch={false}
                   className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-stone-300 hover:bg-red-950 hover:text-white transition-all group border border-transparent hover:border-red-900/50"
                 >
                   <item.icon className="h-5 w-5 mr-3 text-red-700 group-hover:text-red-500 transition-colors" />

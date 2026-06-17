@@ -7,6 +7,10 @@ const files = [
     inject: 'export const runtime = "edge";'
   },
   {
+    path: 'src/app/login/page.tsx',
+    inject: 'export const runtime = "edge";'
+  },
+  {
     path: 'src/app/p/[punguanId]/layout.tsx',
     inject: 'export const runtime = "edge";'
   },

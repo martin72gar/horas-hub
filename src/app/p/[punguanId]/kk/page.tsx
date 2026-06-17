@@ -1,17 +1,42 @@
 import { verifyTenantAccess } from "@/lib/dal";
 import { db } from "@/db";
 import { households, members } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or, ilike, type SQL } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Search, Edit } from "lucide-react";
+import { PlusCircle, Edit } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import SearchInput from "./SearchInput";
 
-export default async function KKPage({ params }: { params: Promise<{ punguanId: string }> }) {
+export default async function KKPage({ 
+  params,
+  searchParams
+}: { 
+  params: Promise<{ punguanId: string }>;
+  searchParams: Promise<{ q?: string }>;
+}) {
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const punguanId = resolvedParams.punguanId;
+  const searchQuery = resolvedSearchParams.q || "";
   const role = await verifyTenantAccess(punguanId);
   
+  // Scoped conditions
+  const conditions: (SQL | undefined)[] = [eq(households.punguanId, punguanId)];
+  if (searchQuery) {
+    const pattern = `%${searchQuery}%`;
+    const searchFilter = or(
+      ilike(households.headName, pattern),
+      ilike(households.panggoaran, pattern),
+      ilike(households.sektor, pattern),
+      ilike(households.pomparan, pattern),
+      ilike(members.fullName, pattern)
+    );
+    if (searchFilter) {
+      conditions.push(searchFilter);
+    }
+  }
+
   // Ambil data menggunakan DAL yang aman antar-tenant
   const kkListRaw = await db.select({
     id: households.id,
@@ -27,7 +52,7 @@ export default async function KKPage({ params }: { params: Promise<{ punguanId: 
   })
   .from(households)
   .leftJoin(members, and(eq(members.householdId, households.id), eq(members.relation, 'ISTRI')))
-  .where(eq(households.punguanId, punguanId));
+  .where(and(...conditions));
 
   const kkList = kkListRaw.map(kk => {
     let formattedHeadName = kk.headName;
@@ -95,14 +120,7 @@ export default async function KKPage({ params }: { params: Promise<{ punguanId: 
 
       <div className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
         <div className="p-5 border-b border-stone-200 flex items-center justify-between bg-stone-50/50">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
-            <input 
-              type="text" 
-              placeholder="Cari nama KK..." 
-              className="pl-9 pr-4 py-2 w-full border border-stone-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-red-800"
-            />
-          </div>
+          <SearchInput />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">

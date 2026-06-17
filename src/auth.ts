@@ -1,3 +1,11 @@
+try {
+  Object.defineProperty(globalThis, 'setImmediate', {
+    value: (fn: any, ...args: any[]) => setTimeout(fn, 0, ...args),
+    configurable: true,
+    writable: true
+  });
+} catch (e) {}
+
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { authConfig } from './auth.config';

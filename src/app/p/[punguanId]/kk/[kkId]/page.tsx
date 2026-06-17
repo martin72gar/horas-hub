@@ -8,6 +8,21 @@ import { ArrowLeft, User, Phone, MapPin, Edit, Map, Users } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
+const getStatusBadgeClass = (status: string) => {
+  switch (status) {
+    case 'AKTIF':
+      return 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border-none';
+    case 'NONAKTIF':
+      return 'bg-stone-100 text-stone-800 hover:bg-stone-200 border-none';
+    case 'PINDAH':
+      return 'bg-amber-100 text-amber-800 hover:bg-amber-200 border-none';
+    case 'MENINGGAL':
+      return 'bg-rose-100 text-rose-800 hover:bg-rose-200 border-none';
+    default:
+      return '';
+  }
+};
+
 export default async function DetailKKPage({ params }: { params: Promise<{ punguanId: string, kkId: string }> }) {
   const resolvedParams = await params;
   const { punguanId, kkId } = resolvedParams;
@@ -82,12 +97,12 @@ export default async function DetailKKPage({ params }: { params: Promise<{ pungu
                    <span className="leading-tight">{kk.address || '-'}</span>
                  </div>
                </div>
-               <div>
-                 <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Status</p>
-                 <Badge variant={kk.status === 'AKTIF' ? 'default' : 'secondary'} className={kk.status === 'AKTIF' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : ''}>
-                    {kk.status}
-                 </Badge>
-               </div>
+                <div>
+                  <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Status</p>
+                  <Badge variant="secondary" className={getStatusBadgeClass(kk.status)}>
+                     {kk.status}
+                  </Badge>
+                </div>
              </div>
           </div>
         </div>
@@ -105,6 +120,7 @@ export default async function DetailKKPage({ params }: { params: Promise<{ pungu
                       <th className="px-6 py-3">Pomparan</th>
                       <th className="px-6 py-3">Hubungan</th>
                       <th className="px-6 py-3 text-center">L/P</th>
+                      <th className="px-6 py-3">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-200">
@@ -120,6 +136,11 @@ export default async function DetailKKPage({ params }: { params: Promise<{ pungu
                           </Badge>
                         </td>
                         <td className="px-6 py-4 text-stone-600 text-center font-medium">{anggota.gender}</td>
+                        <td className="px-6 py-4 text-stone-600">
+                          <Badge variant="secondary" className={getStatusBadgeClass(anggota.status)}>
+                            {anggota.status}
+                          </Badge>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

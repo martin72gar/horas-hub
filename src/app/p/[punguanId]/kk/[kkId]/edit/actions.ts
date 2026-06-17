@@ -22,6 +22,7 @@ export async function updateKK(punguanId: string, kkId: string, formData: FormDa
     const pomparan = formData.get("pomparan") as string;
     const nomorKeturunanStr = formData.get("nomorKeturunan") as string;
     const nomorKeturunan = nomorKeturunanStr ? parseInt(nomorKeturunanStr, 10) : null;
+    const status = (formData.get("status") || "AKTIF") as "AKTIF" | "NONAKTIF" | "PINDAH" | "MENINGGAL";
 
     if (!headName) return { error: "Nama Kepala Keluarga wajib diisi." };
 
@@ -29,12 +30,12 @@ export async function updateKK(punguanId: string, kkId: string, formData: FormDa
     await db.transaction(async (tx) => {
       // Update KK
       await tx.update(households)
-        .set({ headName, panggoaran, phone, address, sektor: sektor || null, pomparan: pomparan || null, nomorKeturunan, updatedAt: new Date() })
+        .set({ headName, panggoaran, phone, address, sektor: sektor || null, pomparan: pomparan || null, nomorKeturunan, status, updatedAt: new Date() })
         .where(and(eq(households.id, kkId), eq(households.punguanId, punguanId)));
 
-      // Update KEPALA relation name
+      // Update KEPALA relation name & status
       await tx.update(members)
-        .set({ fullName: headName, pomparan: pomparan || null, nomorKeturunan })
+        .set({ fullName: headName, pomparan: pomparan || null, nomorKeturunan, status })
         .where(and(eq(members.householdId, kkId), eq(members.relation, 'KEPALA')));
 
       // Delete non-KEPALA members
@@ -62,6 +63,7 @@ export async function updateKK(punguanId: string, kkId: string, formData: FormDa
               gender: a.gender,
               pomparan: mPomparan,
               nomorKeturunan: mNomor,
+              status: (a.status || "AKTIF") as "AKTIF" | "NONAKTIF" | "PINDAH" | "MENINGGAL",
             };
           })
         );

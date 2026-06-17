@@ -12,7 +12,7 @@ import {
 import { relations } from "drizzle-orm";
 
 export const roleEnum = pgEnum("role", ["KETUA", "SEKRETARIS", "BENDAHARA"]);
-export const householdStatusEnum = pgEnum("household_status", ["AKTIF", "PINDAH", "MENINGGAL"]);
+export const householdStatusEnum = pgEnum("household_status", ["AKTIF", "PINDAH", "MENINGGAL", "NONAKTIF"]);
 export const memberRelationEnum = pgEnum("member_relation", ["KEPALA", "ISTRI", "ANAK", "LAINNYA"]);
 export const memberGenderEnum = pgEnum("member_gender", ["L", "P"]);
 export const billStatusEnum = pgEnum("bill_status", ["BELUM_BAYAR", "SEBAGIAN", "LUNAS"]);

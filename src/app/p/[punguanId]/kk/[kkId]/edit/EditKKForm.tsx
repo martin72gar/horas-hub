@@ -8,13 +8,13 @@ import Link from "next/link";
 
 export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguanId: string, kk: any, existingAnggota: any[] }) {
   const [anggota, setAnggota] = useState(existingAnggota.length > 0 ? existingAnggota : [
-    { relation: "ISTRI", fullName: "", gender: "P" as "P" | "L" }
+    { relation: "ISTRI", fullName: "", gender: "P" as "P" | "L", status: "AKTIF" as any }
   ]);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleAddAnggota = () => {
-    setAnggota([...anggota, { relation: "ANAK", fullName: "", gender: "L" }]);
+    setAnggota([...anggota, { relation: "ANAK", fullName: "", gender: "L", status: "AKTIF" as any }]);
   };
 
   const handleRemoveAnggota = (index: number) => {
@@ -78,6 +78,14 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
             <label className="text-sm font-medium text-stone-700">Alamat</label>
             <textarea name="address" defaultValue={kk.address || ''} rows={2} className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md" />
           </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-stone-700">Status Keluarga</label>
+            <select name="status" defaultValue={kk.status} className="w-full px-3 py-2 border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md bg-white">
+              <option value="AKTIF">Aktif</option>
+              <option value="NONAKTIF">Nonaktif</option>
+              <option value="PINDAH">Pindah</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -110,8 +118,8 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
                 <option value="LAINNYA">Lainnya</option>
               </select>
             </div>
-            <div className="w-full space-y-1.5 md:col-span-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">Gender</label>
+            <div className="w-full space-y-1.5 md:col-span-1">
+              <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">L/P</label>
               <select
                 value={a.gender}
                 onChange={(e) => handleAnggotaChange(i, "gender", e.target.value)}
@@ -130,8 +138,8 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
                 placeholder="Cth: Silo" 
               />
             </div>
-            <div className="w-full space-y-1.5 md:col-span-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">No. Pomp/Ke</label>
+            <div className="w-full space-y-1.5 md:col-span-1">
+              <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">No.</label>
               <input 
                 type="number"
                 value={a.nomorKeturunan || ''} 
@@ -139,6 +147,18 @@ export default function EditKKForm({ punguanId, kk, existingAnggota }: { punguan
                 className="w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md bg-white" 
                 placeholder="Cth: 17" 
               />
+            </div>
+            <div className="w-full space-y-1.5 md:col-span-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">Status</label>
+              <select
+                value={a.status || 'AKTIF'}
+                onChange={(e) => handleAnggotaChange(i, "status", e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-stone-500 focus:border-stone-500 rounded-md bg-white"
+              >
+                <option value="AKTIF">Aktif</option>
+                <option value="NONAKTIF">Nonaktif</option>
+                <option value="PINDAH">Pindah</option>
+              </select>
             </div>
             <div className="flex justify-end w-full md:col-span-1 pb-1">
               <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveAnggota(i)} className="text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full h-9 w-9">

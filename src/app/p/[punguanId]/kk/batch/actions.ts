@@ -1,6 +1,6 @@
 "use server"
 
-import { db } from "@/db";
+import { transactionDb } from "@/db";
 import { households, members } from "@/db/schema";
 import { verifyTenantAccess } from "@/lib/dal";
 import { revalidatePath } from "next/cache";
@@ -16,7 +16,7 @@ export async function createBatchKK(punguanId: string, rows: any[]) {
       return { error: "Data batch kosong." };
     }
 
-    await db.transaction(async (tx) => {
+    await transactionDb.transaction(async (tx) => {
       for (const row of rows) {
         const headName = row.headName?.trim();
         if (!headName) continue;

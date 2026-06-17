@@ -1,6 +1,6 @@
 "use server"
 
-import { db } from "@/db";
+import { transactionDb } from "@/db";
 import { households, members } from "@/db/schema";
 import { verifyTenantAccess } from "@/lib/dal";
 import { eq, and, not } from "drizzle-orm";
@@ -27,7 +27,7 @@ export async function updateKK(punguanId: string, kkId: string, formData: FormDa
     if (!headName) return { error: "Nama Kepala Keluarga wajib diisi." };
 
     // Transaction to update KK and Members
-    await db.transaction(async (tx) => {
+    await transactionDb.transaction(async (tx) => {
       // Update KK
       await tx.update(households)
         .set({ headName, panggoaran, phone, address, sektor: sektor || null, pomparan: pomparan || null, nomorKeturunan, status, updatedAt: new Date() })

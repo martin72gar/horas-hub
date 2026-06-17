@@ -1,6 +1,6 @@
 "use server"
 
-import { db } from "@/db";
+import { transactionDb } from "@/db";
 import { households, members } from "@/db/schema";
 import { verifyTenantAccess } from "@/lib/dal";
 import { redirect } from "next/navigation";
@@ -25,7 +25,7 @@ export async function createKK(punguanId: string, formData: FormData, anggota: a
     if (!headName) return { error: "Nama Kepala Keluarga wajib diisi." };
 
     // Transaction to insert KK and Members
-    await db.transaction(async (tx) => {
+    await transactionDb.transaction(async (tx) => {
       const [kk] = await tx.insert(households).values({
         punguanId,
         headName,

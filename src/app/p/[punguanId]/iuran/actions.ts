@@ -1,6 +1,6 @@
 "use server"
 
-import { db } from "@/db";
+import { db, transactionDb } from "@/db";
 import { iuranBills, households, iuranPayments } from "@/db/schema";
 import { verifyTenantAccess } from "@/lib/dal";
 import { eq, and } from "drizzle-orm";
@@ -46,7 +46,7 @@ export async function markAsPaid(punguanId: string, billId: string, amount: numb
     throw new Error("Hanya Bendahara yang berhak mencatat pembayaran.");
   }
 
-  await db.transaction(async (tx) => {
+  await transactionDb.transaction(async (tx) => {
     await tx.insert(iuranPayments).values({
       billId,
       amount,

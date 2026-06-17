@@ -1,6 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 
+const onlyCloudflarePages = process.argv.includes('--if-cloudflare-pages');
+
+if (onlyCloudflarePages && process.env.CF_PAGES !== '1') {
+  console.log('Skipping Cloudflare edge runtime injection outside Cloudflare Pages.');
+  process.exit(0);
+}
+
 const files = [
   {
     path: 'src/app/api/auth/[...nextauth]/route.ts',

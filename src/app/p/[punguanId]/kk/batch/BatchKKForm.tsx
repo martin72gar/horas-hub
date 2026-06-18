@@ -37,6 +37,11 @@ const HEADER_MAPPING: Record<string, string> = {
   "istri": "wifeName",
   "boru": "wifeName",
 
+  "nama anak": "children",
+  "daftar anak": "children",
+  "anak-anak": "children",
+  "anak": "children",
+
   "sektor": "sektor",
   "wilayah": "sektor",
 
@@ -59,9 +64,9 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [rows, setRows] = useState([
-    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "" },
-    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "" },
-    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "" },
+    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "", children: "" },
+    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "", children: "" },
+    { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "", children: "" },
   ]);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,7 +75,7 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleAddRow = () => {
-    setRows([...rows, { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "" }]);
+    setRows([...rows, { headName: "", panggoaran: "", phone: "", address: "", wifeName: "", sektor: "", pomparan: "", nomorKeturunan: "", children: "" }]);
   };
 
   const handleRemoveRow = (index: number) => {
@@ -164,6 +169,7 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
             pomparan: getVal("pomparan"),
             nomorKeturunan,
             wifeName: getVal("wifeName"),
+            children: getVal("children"),
             sektor: getVal("sektor"),
             phone: getVal("phone"),
             address: getVal("address"),
@@ -223,6 +229,7 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
       "Pomparan",
       "No. Pomparan / Keturunan",
       "Nama Istri",
+      "Daftar Anak (dipisah koma)",
       "Sektor",
       "No. Handphone",
       "Alamat"
@@ -234,6 +241,7 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
         "Silo Jambe",
         "16",
         "br. Sipahutar",
+        "Friska Matdalena br. Siregar, Sem Misael Siregar",
         "Warakas",
         "081234567890",
         "Jl. Warakas V No. 96A"
@@ -363,6 +371,7 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
               <th className="px-4 py-3 min-w-[150px]">Pomparan</th>
               <th className="px-4 py-3 min-w-[120px]">No. Pomp/Ke</th>
               <th className="px-4 py-3 min-w-[200px]">Nama Istri</th>
+              <th className="px-4 py-3 min-w-[250px]">Daftar Anak (dipisah koma)</th>
               <th className="px-4 py-3 min-w-[150px]">Sektor</th>
               <th className="px-4 py-3 min-w-[150px]">No. Handphone</th>
               <th className="px-4 py-3 min-w-[250px]">Alamat</th>
@@ -412,6 +421,14 @@ export default function BatchKKForm({ punguanId }: { punguanId: string }) {
                     onChange={e => handleRowChange(i, 'wifeName', e.target.value)}
                     className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
                     placeholder="Tiurmauli br. Tampubolon"
+                  />
+                </td>
+                <td className="px-2 py-2">
+                  <input
+                    value={row.children || ''}
+                    onChange={e => handleRowChange(i, 'children', e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm border-transparent hover:border-stone-200 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded bg-transparent focus:bg-white"
+                    placeholder="Cth: Friska, Sem"
                   />
                 </td>
                 <td className="px-2 py-2">

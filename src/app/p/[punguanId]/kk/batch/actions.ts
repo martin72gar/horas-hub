@@ -63,6 +63,33 @@ export async function createBatchKK(punguanId: string, rows: any[]) {
             gender: "P",
           });
         }
+
+        // Insert children if provided
+        if (row.children && row.children.trim() !== "") {
+          const childNames = row.children.split(/[,;]/);
+          for (const childName of childNames) {
+            const cleanChildName = childName.trim();
+            if (!cleanChildName) continue;
+
+            // Smart gender guess: if name contains "br.", "boru", or " br ", assume female 'P', else 'L'
+            const lowerChild = cleanChildName.toLowerCase();
+            const isFemale = lowerChild.includes("br.") || lowerChild.includes(" br ") || lowerChild.includes("boru");
+
+            // Smart lineage: default child pomparan/no. keturunan from head
+            const childPomparan = row.pomparan?.trim() || null;
+            const childNomorKeturunan = nomorKeturunanVal ? nomorKeturunanVal + 1 : null;
+
+            await tx.insert(members).values({
+              householdId: kk.id,
+              punguanId,
+              fullName: cleanChildName,
+              relation: "ANAK",
+              gender: isFemale ? "P" : "L",
+              pomparan: childPomparan,
+              nomorKeturunan: childNomorKeturunan,
+            });
+          }
+        }
       }
     });
 

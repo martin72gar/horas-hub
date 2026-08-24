@@ -67,6 +67,22 @@ export async function getUserPunguans() {
   return userAccesses.map(a => a.punguan);
 }
 
+/**
+ * Ketua, Sekretaris, dan Superadmin boleh mengelola konten punguan
+ * (landing page, AD/ART, pengumuman). Bendahara tidak.
+ */
+export function isPengurusRole(role: string) {
+  return role === 'SUPERADMIN' || role === 'KETUA' || role === 'SEKRETARIS';
+}
+
+export async function verifyPengurusAccess(punguanId: string) {
+  const role = await verifyTenantAccess(punguanId);
+  if (!isPengurusRole(role)) {
+    throw new Error('Hanya Ketua atau Sekretaris yang berhak melakukan tindakan ini.');
+  }
+  return role;
+}
+
 // --- Contoh Data Access Helper yang aman (Tenant-Scoped) ---
 
 export async function getHouseholds(punguanId: string) {

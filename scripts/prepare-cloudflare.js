@@ -24,6 +24,30 @@ const files = [
   {
     path: 'src/app/p/page.tsx',
     inject: 'export const runtime = "edge";'
+  },
+  {
+    path: 'src/app/sites/[slug]/layout.tsx',
+    inject: 'export const runtime = "edge";'
+  },
+  {
+    path: 'src/app/sites/[slug]/page.tsx',
+    inject: 'export const runtime = "edge";'
+  },
+  {
+    path: 'src/app/sites/[slug]/[jenis]/page.tsx',
+    inject: 'export const runtime = "edge";'
+  },
+  {
+    path: 'src/app/p/[punguanId]/pengaturan/page.tsx',
+    inject: 'export const runtime = "edge";'
+  },
+  {
+    path: 'src/app/p/[punguanId]/ad-art/page.tsx',
+    inject: 'export const runtime = "edge";'
+  },
+  {
+    path: 'src/app/p/[punguanId]/pengumuman/page.tsx',
+    inject: 'export const runtime = "edge";'
   }
 ];
 

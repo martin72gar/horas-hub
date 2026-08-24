@@ -1,10 +1,10 @@
-import { verifyTenantAccess } from "@/lib/dal";
+import { isPengurusRole, verifyTenantAccess } from "@/lib/dal";
 import { db } from "@/db";
 import { announcements, users } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PlusCircle, Megaphone, Clock } from "lucide-react";
+import { Megaphone, Clock } from "lucide-react";
+import { BuatPengumumanForm, PengumumanRowActions } from "./PengumumanActions";
 import { formatDistanceToNow } from "date-fns";
 import { id as localeId } from "date-fns/locale";
 
@@ -12,12 +12,13 @@ export default async function PengumumanPage({ params }: { params: Promise<{ pun
   const resolvedParams = await params;
   const punguanId = resolvedParams.punguanId;
   const role = await verifyTenantAccess(punguanId);
-  const isPengurus = role === 'KETUA' || role === 'SEKRETARIS' || role === 'SUPERADMIN';
+  const isPengurus = isPengurusRole(role);
 
   const items = await db.select({
     id: announcements.id,
     title: announcements.title,
     content: announcements.content,
+    isPublic: announcements.isPublic,
     createdAt: announcements.createdAt,
     authorName: users.name,
   })
@@ -28,16 +29,14 @@ export default async function PengumumanPage({ params }: { params: Promise<{ pun
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-start gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-stone-800 tracking-tight font-serif">Pengumuman Internal</h2>
-          <p className="text-stone-500 mt-1">Informasi dan agenda kegiatan Punguan.</p>
+          <h2 className="text-2xl font-bold text-stone-800 tracking-tight font-serif">Pengumuman</h2>
+          <p className="text-stone-500 mt-1">
+            Informasi dan agenda kegiatan Punguan. Tandai &quot;Publik&quot; agar tampil di landing page.
+          </p>
         </div>
-        {isPengurus && (
-          <Button className="bg-red-800 hover:bg-red-900 text-white shadow-sm">
-            <PlusCircle className="mr-2 h-4 w-4" /> Buat Pengumuman
-          </Button>
-        )}
+        {isPengurus && <BuatPengumumanForm punguanId={punguanId} />}
       </div>
 
       <div className="grid grid-cols-1 gap-6 max-w-4xl">
@@ -50,8 +49,11 @@ export default async function PengumumanPage({ params }: { params: Promise<{ pun
           items.map(item => (
             <Card key={item.id} className="border-stone-200 shadow-sm overflow-hidden">
                <div className="h-1.5 w-full bg-red-800"></div>
-               <CardHeader className="pb-3">
+               <CardHeader className="pb-3 flex flex-wrap items-start justify-between gap-3">
                  <CardTitle className="text-xl text-stone-900">{item.title}</CardTitle>
+                 {isPengurus && (
+                   <PengumumanRowActions punguanId={punguanId} id={item.id} isPublic={item.isPublic} />
+                 )}
                </CardHeader>
                <CardContent>
                  <p className="text-stone-700 whitespace-pre-wrap leading-relaxed">{item.content}</p>

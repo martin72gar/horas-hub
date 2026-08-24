@@ -8,6 +8,8 @@ import {
   date,
   integer,
   pgEnum,
+  jsonb,
+  unique,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -17,6 +19,7 @@ export const memberRelationEnum = pgEnum("member_relation", ["KEPALA", "ISTRI", 
 export const memberGenderEnum = pgEnum("member_gender", ["L", "P"]);
 export const billStatusEnum = pgEnum("bill_status", ["BELUM_BAYAR", "SEBAGIAN", "LUNAS"]);
 export const arisanStatusEnum = pgEnum("arisan_status", ["AKTIF", "SELESAI"]);
+export const statuteTypeEnum = pgEnum("statute_type", ["AD", "ART"]);
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -32,6 +35,14 @@ export const punguans = pgTable("punguans", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
+  // Landing page publik (slug = subdomain, mis. punguan-toba.horashub.com)
+  slug: varchar("slug", { length: 63 }).unique(),
+  landingPublished: boolean("landing_published").default(false).notNull(),
+  tagline: varchar("tagline", { length: 255 }),
+  about: text("about"),
+  contactPhone: varchar("contact_phone", { length: 50 }),
+  contactEmail: varchar("contact_email", { length: 255 }),
+  contactAddress: text("contact_address"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -139,10 +150,51 @@ export const announcements = pgTable("announcements", {
   punguanId: uuid("punguan_id").notNull().references(() => punguans.id, { onDelete: "cascade" }),
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content").notNull(),
+  isPublic: boolean("is_public").default(false).notNull(),
   createdBy: uuid("created_by").notNull().references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const statutes = pgTable("statutes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  punguanId: uuid("punguan_id").notNull().references(() => punguans.id, { onDelete: "cascade" }),
+  type: statuteTypeEnum("type").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  preamble: text("preamble"),
+  // Snapshot yang dilihat publik. null = belum pernah diterbitkan.
+  publishedContent: jsonb("published_content").$type<PublishedStatute | null>(),
+  publishedAt: timestamp("published_at"),
+  publishedBy: uuid("published_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (t) => [unique("statutes_punguan_type_unique").on(t.punguanId, t.type)]);
+
+export const statuteArticles = pgTable("statute_articles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  statuteId: uuid("statute_id").notNull().references(() => statutes.id, { onDelete: "cascade" }),
+  babNumber: integer("bab_number").notNull(),
+  babTitle: varchar("bab_title", { length: 255 }).notNull(),
+  pasalNumber: integer("pasal_number").notNull(),
+  pasalTitle: varchar("pasal_title", { length: 255 }),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type PublishedArticle = {
+  babNumber: number;
+  babTitle: string;
+  pasalNumber: number;
+  pasalTitle: string | null;
+  content: string;
+};
+
+export type PublishedStatute = {
+  title: string;
+  preamble: string | null;
+  articles: PublishedArticle[];
+};
 
 export const usersRelations = relations(users, ({ many }) => ({
   punguanUsers: many(punguanUsers),
@@ -155,6 +207,16 @@ export const punguansRelations = relations(punguans, ({ many }) => ({
   iuranBills: many(iuranBills),
   arisanGroups: many(arisanGroups),
   announcements: many(announcements),
+  statutes: many(statutes),
+}));
+
+export const statutesRelations = relations(statutes, ({ one, many }) => ({
+  punguan: one(punguans, { fields: [statutes.punguanId], references: [punguans.id] }),
+  articles: many(statuteArticles),
+}));
+
+export const statuteArticlesRelations = relations(statuteArticles, ({ one }) => ({
+  statute: one(statutes, { fields: [statuteArticles.statuteId], references: [statutes.id] }),
 }));
 
 export const householdsRelations = relations(households, ({ one, many }) => ({

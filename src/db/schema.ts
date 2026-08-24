@@ -162,6 +162,9 @@ export const statutes = pgTable("statutes", {
   type: statuteTypeEnum("type").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   preamble: text("preamble"),
+  // Judul seksi pembuka. null = pakai DEFAULT_PREAMBLE_TITLE.
+  preambleTitle: varchar("preamble_title", { length: 120 }),
+  preamblePublished: boolean("preamble_published").default(true).notNull(),
   // Snapshot yang dilihat publik. null = belum pernah diterbitkan.
   publishedContent: jsonb("published_content").$type<PublishedStatute | null>(),
   publishedAt: timestamp("published_at"),
@@ -193,6 +196,8 @@ export type PublishedArticle = {
 export type PublishedStatute = {
   title: string;
   preamble: string | null;
+  // Opsional: snapshot lama terbit sebelum judul pembuka bisa diubah.
+  preambleTitle?: string | null;
   articles: PublishedArticle[];
 };
 

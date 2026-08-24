@@ -51,26 +51,26 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
         {published.length > 0 && (
           <section>
             <h2 className="text-2xl font-bold font-serif text-stone-800 mb-4">Dasar Organisasi</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {published.map((s) => (
-                <Link key={s.type} href={`/${s.type.toLowerCase()}`}>
-                  <Card className="border-stone-200 shadow-sm hover:border-red-800 hover:shadow-md transition-all h-full">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center gap-2 text-lg text-stone-900">
-                        <ScrollText className="h-5 w-5 text-red-800" />
-                        {STATUTE_LABELS[s.type]}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-sm text-stone-500">
-                      {s.publishedContent.articles.length} pasal
+            <Link href={`/${published[0].type.toLowerCase()}`} className="block sm:max-w-md">
+              <Card className="border-stone-200 shadow-sm hover:border-red-800 hover:shadow-md transition-all h-full">
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-lg text-stone-900">
+                    <ScrollText className="h-5 w-5 text-red-800" />
+                    {published.map((s) => s.type).join(' & ')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm text-stone-500 space-y-1">
+                  {published.map((s) => (
+                    <p key={s.type}>
+                      {STATUTE_LABELS[s.type]} · {s.publishedContent.articles.length} pasal
                       {s.publishedAt && (
                         <> · diterbitkan {s.publishedAt.toLocaleDateString('id-ID', { dateStyle: 'long' })}</>
                       )}
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
+            </Link>
           </section>
         )}
 

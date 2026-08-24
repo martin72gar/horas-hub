@@ -7,6 +7,9 @@ export const STATUTE_LABELS: Record<StatuteType, string> = {
   ART: 'Anggaran Rumah Tangga',
 };
 
+/** Judul seksi pembuka bawaan kalau pengurus tidak mengisi sendiri. */
+export const DEFAULT_PREAMBLE_TITLE = 'PENDAHULUAN';
+
 export function parseStatuteType(value: string): StatuteType | null {
   const upper = value.toUpperCase();
   return upper === 'AD' || upper === 'ART' ? upper : null;

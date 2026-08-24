@@ -102,6 +102,8 @@ export default async function AdArtPage({
             type,
             title: doc.title,
             preamble: doc.preamble,
+            preambleTitle: doc.preambleTitle,
+            preamblePublished: doc.preamblePublished,
             publishedAt: doc.publishedAt,
             isPublished: doc.publishedContent != null,
           }}

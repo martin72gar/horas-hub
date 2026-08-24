@@ -65,10 +65,17 @@ export async function updateStatuteMeta(punguanId: string, statuteId: string, fo
     const title = String(formData.get('title') ?? '').trim();
     if (!title) return { error: 'Judul dokumen wajib diisi.' };
     const preamble = String(formData.get('preamble') ?? '').trim();
+    const preambleTitle = String(formData.get('preambleTitle') ?? '').trim();
 
     await db
       .update(statutes)
-      .set({ title, preamble: preamble || null, updatedAt: new Date() })
+      .set({
+        title,
+        preamble: preamble || null,
+        preambleTitle: preambleTitle || null,
+        preamblePublished: formData.get('preamblePublished') === 'on',
+        updatedAt: new Date(),
+      })
       .where(eq(statutes.id, statuteId));
   } catch (error: unknown) {
     console.error(error);
@@ -162,7 +169,10 @@ export async function publishStatute(punguanId: string, statuteId: string) {
 
     const snapshot: PublishedStatute = {
       title: doc.title,
-      preamble: doc.preamble,
+      // Saklar dipakai di sini, bukan di halaman publik: yang tidak diterbitkan
+      // tidak ikut masuk snapshot sama sekali.
+      preamble: doc.preamblePublished ? doc.preamble : null,
+      preambleTitle: doc.preambleTitle,
       articles,
     };
 

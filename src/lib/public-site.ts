@@ -1,6 +1,6 @@
 import 'server-only';
 import { cache } from 'react';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import {
   announcements,
@@ -64,7 +64,9 @@ export async function getPublishedStatutes(punguanId: string) {
       publishedAt: statutes.publishedAt,
     })
     .from(statutes)
-    .where(eq(statutes.punguanId, punguanId));
+    .where(eq(statutes.punguanId, punguanId))
+    // Urutan enum: AD dulu, baru ART — dipakai nav, tab, dan footer.
+    .orderBy(asc(statutes.type));
 
   return rows.filter(
     (r): r is typeof r & { publishedContent: PublishedStatute } => r.publishedContent != null

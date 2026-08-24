@@ -45,15 +45,14 @@ export default async function PublicSiteLayout({
             <Link href="/" className="text-stone-300 hover:text-white transition-colors">
               Beranda
             </Link>
-            {published.map((s) => (
+            {published.length > 0 && (
               <Link
-                key={s.type}
-                href={`/${s.type.toLowerCase()}`}
+                href={`/${published[0].type.toLowerCase()}`}
                 className="text-stone-300 hover:text-white transition-colors"
               >
-                {s.type}
+                {published.map((s) => s.type).join('/')}
               </Link>
-            ))}
+            )}
           </nav>
         </div>
       </header>

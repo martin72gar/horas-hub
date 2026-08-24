@@ -1,7 +1,8 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getPublishedPunguan, getPublishedStatutes } from '@/lib/public-site';
-import { parseStatuteType, STATUTE_LABELS, toRoman } from '@/lib/statute';
+import { DEFAULT_PREAMBLE_TITLE, parseStatuteType, STATUTE_LABELS, toRoman } from '@/lib/statute';
 import type { PublishedArticle } from '@/db/schema';
 
 async function load(slug: string, jenis: string) {
@@ -11,8 +12,9 @@ async function load(slug: string, jenis: string) {
   const punguan = await getPublishedPunguan(slug);
   if (!punguan) return null;
 
-  const doc = (await getPublishedStatutes(punguan.id)).find((s) => s.type === type);
-  return doc ? { type, doc } : null;
+  const published = await getPublishedStatutes(punguan.id);
+  const doc = published.find((s) => s.type === type);
+  return doc ? { type, doc, published } : null;
 }
 
 export async function generateMetadata({
@@ -34,8 +36,8 @@ export default async function StatutePage({
   const found = await load(slug, jenis);
   if (!found) notFound();
 
-  const { type, doc } = found;
-  const { title, preamble, articles } = doc.publishedContent;
+  const { type, doc, published } = found;
+  const { title, preamble, preambleTitle, articles } = doc.publishedContent;
 
   // Kelompokkan per BAB. Urutan sudah dibekukan saat publish.
   const babs: { number: number; title: string; articles: PublishedArticle[] }[] = [];
@@ -47,6 +49,24 @@ export default async function StatutePage({
 
   return (
     <article className="max-w-3xl mx-auto px-6 py-12">
+      {published.length > 1 && (
+        <nav className="flex gap-2 border-b border-stone-200 mb-8">
+          {published.map((s) => (
+            <Link
+              key={s.type}
+              href={`/${s.type.toLowerCase()}`}
+              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                s.type === type
+                  ? 'border-red-800 text-red-900'
+                  : 'border-transparent text-stone-500 hover:text-stone-800'
+              }`}
+            >
+              {STATUTE_LABELS[s.type]}
+            </Link>
+          ))}
+        </nav>
+      )}
+
       <header className="border-b border-stone-200 pb-6 mb-8">
         <p className="text-sm font-semibold tracking-wider text-red-800 uppercase">
           {STATUTE_LABELS[type]}
@@ -61,7 +81,9 @@ export default async function StatutePage({
 
       {preamble && (
         <section className="mb-10">
-          <h2 className="text-lg font-bold font-serif text-stone-800 mb-3 text-center">MUKADIMAH</h2>
+          <h2 className="text-lg font-bold font-serif text-stone-800 mb-3 text-center">
+            {preambleTitle?.trim() || DEFAULT_PREAMBLE_TITLE}
+          </h2>
           <p className="text-stone-700 whitespace-pre-wrap leading-relaxed">{preamble}</p>
         </section>
       )}

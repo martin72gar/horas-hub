@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ExternalLink, Loader2, Pencil, Plus, Trash2, Upload } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { toRoman, type StatuteType } from '@/lib/statute';
+import { DEFAULT_PREAMBLE_TITLE, toRoman, type StatuteType } from '@/lib/statute';
 import {
   deleteArticle,
   publishStatute,
@@ -27,6 +27,8 @@ type Statute = {
   type: StatuteType;
   title: string;
   preamble: string | null;
+  preambleTitle: string | null;
+  preamblePublished: boolean;
   publishedAt: Date | null;
   isPublished: boolean;
 };
@@ -130,7 +132,7 @@ export default function StatuteEditor({
               onClick={() => setEditingMeta((v) => !v)}
               className="inline-flex items-center gap-2 border border-stone-300 hover:bg-stone-50 text-stone-700 text-sm px-4 py-2 rounded-md transition-colors"
             >
-              <Pencil className="h-4 w-4" /> Judul &amp; Mukadimah
+              <Pencil className="h-4 w-4" /> Judul &amp; Pembuka
             </button>
             <button
               onClick={() =>
@@ -180,11 +182,36 @@ export default function StatuteEditor({
               <input id="title" name="title" defaultValue={statute.title} maxLength={255} className={inputClass} />
             </div>
             <div>
+              <label htmlFor="preambleTitle" className="block text-sm font-medium text-stone-700 mb-1">
+                Judul seksi pembuka{' '}
+                <span className="text-stone-400 font-normal">
+                  (kosongkan = {DEFAULT_PREAMBLE_TITLE})
+                </span>
+              </label>
+              <input
+                id="preambleTitle"
+                name="preambleTitle"
+                defaultValue={statute.preambleTitle ?? ''}
+                placeholder={DEFAULT_PREAMBLE_TITLE}
+                maxLength={120}
+                className={inputClass}
+              />
+            </div>
+            <div>
               <label htmlFor="preamble" className="block text-sm font-medium text-stone-700 mb-1">
-                Mukadimah <span className="text-stone-400 font-normal">(opsional)</span>
+                Isi seksi pembuka <span className="text-stone-400 font-normal">(opsional)</span>
               </label>
               <textarea id="preamble" name="preamble" rows={5} defaultValue={statute.preamble ?? ''} className={inputClass} />
             </div>
+            <label className="flex items-center gap-2 text-sm text-stone-700">
+              <input
+                type="checkbox"
+                name="preamblePublished"
+                defaultChecked={statute.preamblePublished}
+                className="h-4 w-4 rounded border-stone-300 text-red-800 focus:ring-red-500"
+              />
+              Tampilkan seksi pembuka di landing page
+            </label>
             <div className="flex gap-2">
               <button
                 type="submit"

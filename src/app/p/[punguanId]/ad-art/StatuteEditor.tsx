@@ -6,7 +6,7 @@ import { ExternalLink, Loader2, Pencil, Plus, Trash2, Upload } from 'lucide-reac
 import { Badge } from '@/components/ui/badge';
 import { DEFAULT_PREAMBLE_TITLE, groupByBab, toRoman, type StatuteType } from '@/lib/statute';
 import type { StatuteExportData } from '@/lib/statute-export';
-import StatuteExportButtons from './StatuteExportButtons';
+import StatuteExportButtons from '@/components/StatuteExportButtons';
 import {
   deleteArticle,
   publishStatute,

@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { getPublishedPunguan, getPublishedStatutes } from '@/lib/public-site';
 import { DEFAULT_PREAMBLE_TITLE, parseStatuteType, STATUTE_LABELS, toRoman } from '@/lib/statute';
 import type { PublishedArticle } from '@/db/schema';
+import StatuteExportButtons from '@/components/StatuteExportButtons';
 
 async function load(slug: string, jenis: string) {
   const type = parseStatuteType(jenis);
@@ -77,6 +78,19 @@ export default async function StatutePage({
             Terakhir diperbarui {doc.publishedAt.toLocaleDateString('id-ID', { dateStyle: 'long' })}
           </p>
         )}
+        <StatuteExportButtons
+          className="mt-5"
+          label="Unduh"
+          data={{
+            type,
+            title,
+            preamble,
+            // Snapshot lama terbit sebelum judul pembuka bisa diubah.
+            preambleTitle: preambleTitle ?? null,
+            publishedAt: doc.publishedAt,
+            articles,
+          }}
+        />
       </header>
 
       {preamble && (

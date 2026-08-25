@@ -19,6 +19,7 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
     getPublishedStatutes(punguan.id),
   ]);
 
+  const struktur = punguan.pengurus;
   const hasKontak = punguan.contactPhone || punguan.contactEmail || punguan.contactAddress;
 
   return (
@@ -110,22 +111,47 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
           </section>
         )}
 
-        {pengurus.length > 0 && (
+        {(struktur || pengurus.length > 0) && (
           <section>
-            <h2 className="text-2xl font-bold font-serif text-stone-800 mb-4 flex items-center gap-2">
+            <h2 className="text-2xl font-bold font-serif text-stone-800 flex items-center gap-2">
               <Users className="h-5 w-5 text-red-800" /> Pengurus
             </h2>
-            <div className="flex flex-wrap gap-3">
-              {pengurus.map((p) => (
-                <div
-                  key={`${p.role}-${p.name}`}
-                  className="bg-white border border-stone-200 rounded-lg px-4 py-3 shadow-sm"
-                >
-                  <p className="font-medium text-stone-900">{p.name}</p>
-                  <Badge className="mt-1 bg-red-900 text-red-50">{p.role}</Badge>
-                </div>
-              ))}
-            </div>
+            {struktur ? (
+              <>
+                <p className="mt-1 text-sm text-stone-500">
+                  {struktur.judul ? `${struktur.judul} · ` : ''}Periode {struktur.periode}
+                </p>
+                <ol className="mt-4 divide-y divide-stone-200 rounded-2xl border border-stone-200/80 bg-white/80 shadow-sm backdrop-blur-sm">
+                  {struktur.entries.map((e, i) => (
+                    <li key={`${e.jabatan}-${i}`} className="flex flex-col gap-1 p-4 sm:flex-row sm:gap-6 md:px-6">
+                      <div className="sm:w-64 sm:flex-shrink-0">
+                        <p className="font-medium text-stone-900">
+                          <span className="text-stone-400 tabular-nums">{i + 1}.</span> {e.jabatan}
+                        </p>
+                        {e.wilayah && <p className="text-xs text-stone-500 sm:ml-5">{e.wilayah}</p>}
+                      </div>
+                      <ul className="space-y-0.5 text-stone-700 sm:ml-0 ml-5">
+                        {e.orang.map((nama) => (
+                          <li key={nama}>{nama}</li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            ) : (
+              <div className="mt-4 flex flex-wrap gap-3">
+                {pengurus.map((p) => (
+                  <div
+                    key={`${p.role}-${p.name}`}
+                    className="bg-white border border-stone-200 rounded-lg px-4 py-3 shadow-sm"
+                  >
+                    <p className="font-medium text-stone-900">{p.name}</p>
+                    <Badge className="mt-1 bg-red-900 text-red-50">{p.role}</Badge>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         )}
 

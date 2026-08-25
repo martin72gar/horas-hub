@@ -43,6 +43,9 @@ export const punguans = pgTable("punguans", {
   contactPhone: varchar("contact_phone", { length: 50 }),
   contactEmail: varchar("contact_email", { length: 255 }),
   contactAddress: text("contact_address"),
+  // Struktur pengurus lengkap (termasuk yang tidak punya akun login).
+  // null = landing page jatuh balik ke daftar akun punguan_users.
+  pengurus: jsonb("pengurus").$type<PengurusStruktur | null>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -184,6 +187,20 @@ export const statuteArticles = pgTable("statute_articles", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export type PengurusEntry = {
+  jabatan: string;
+  /** Wilayah komisaris, mis. "Cilincing-Kb Baru". */
+  wilayah?: string | null;
+  orang: string[];
+};
+
+export type PengurusStruktur = {
+  /** Nama resmi kepengurusan, kalau beda dengan nama punguan. */
+  judul?: string | null;
+  periode: string;
+  entries: PengurusEntry[];
+};
 
 export type PublishedArticle = {
   babNumber: number;

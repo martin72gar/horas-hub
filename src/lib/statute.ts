@@ -22,3 +22,17 @@ export function toRoman(n: number) {
   // ponytail: AD/ART realistis <= 20 BAB; di atas itu tampilkan angka biasa.
   return ROMAN[n] ?? String(n);
 }
+
+/**
+ * Mengelompokkan pasal per BAB untuk ditampilkan / diekspor.
+ * Mengandalkan urutan masukan (sudah diurutkan bab lalu pasal), bukan mengurutkan ulang.
+ */
+export function groupByBab<T extends { babNumber: number; babTitle: string }>(articles: T[]) {
+  const babs: { number: number; title: string; items: T[] }[] = [];
+  for (const a of articles) {
+    const last = babs[babs.length - 1];
+    if (last && last.number === a.babNumber) last.items.push(a);
+    else babs.push({ number: a.babNumber, title: a.babTitle, items: [a] });
+  }
+  return babs;
+}

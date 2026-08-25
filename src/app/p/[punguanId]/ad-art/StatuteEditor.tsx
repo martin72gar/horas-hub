@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ExternalLink, Loader2, Pencil, Plus, Trash2, Upload } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { DEFAULT_PREAMBLE_TITLE, toRoman, type StatuteType } from '@/lib/statute';
+import { DEFAULT_PREAMBLE_TITLE, groupByBab, toRoman, type StatuteType } from '@/lib/statute';
+import type { StatuteExportData } from '@/lib/statute-export';
+import StatuteExportButtons from './StatuteExportButtons';
 import {
   deleteArticle,
   publishStatute,
@@ -74,12 +76,18 @@ export default function StatuteEditor({
   }
 
   // Kelompokkan per BAB untuk tampilan; urutan sudah dari query.
-  const babs: { number: number; title: string; items: Article[] }[] = [];
-  for (const a of articles) {
-    const last = babs[babs.length - 1];
-    if (last && last.number === a.babNumber) last.items.push(a);
-    else babs.push({ number: a.babNumber, title: a.babTitle, items: [a] });
-  }
+  const babs = groupByBab(articles);
+
+  const exportData: StatuteExportData = {
+    type: statute.type,
+    title: statute.title,
+    preamble: statute.preamble,
+    preambleTitle: statute.preambleTitle,
+    // Tanggal terbit hanya ikut kalau isi draft memang sama dengan yang terbit,
+    // supaya berkas ekspor tidak mengklaim tanggal untuk konten yang belum terbit.
+    publishedAt: statute.isPublished && !hasUnpublishedChanges ? statute.publishedAt : null,
+    articles,
+  };
 
   const lastBab = babs[babs.length - 1];
   const nextDefaults = {
@@ -128,6 +136,7 @@ export default function StatuteEditor({
           </div>
 
           <div className="flex flex-wrap gap-2">
+            <StatuteExportButtons data={exportData} onError={setError} />
             <button
               onClick={() => setEditingMeta((v) => !v)}
               className="inline-flex items-center gap-2 border border-stone-300 hover:bg-stone-50 text-stone-700 text-sm px-4 py-2 rounded-md transition-colors"

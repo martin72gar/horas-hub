@@ -23,14 +23,22 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <section className="bg-stone-900 text-white relative overflow-hidden">
-        <div className="absolute right-0 top-0 opacity-10" aria-hidden="true">
-          <svg width="240" height="240" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,0 L100,100 M100,0 L0,100 M50,0 L50,100 M0,50 L100,50" stroke="#FF0000" strokeWidth="4" />
-            <circle cx="50" cy="50" r="20" stroke="#FFFFFF" strokeWidth="2" fill="none" />
-          </svg>
-        </div>
-        <div className="max-w-5xl mx-auto px-6 py-20 relative z-10">
+      <section className="relative flex min-h-[360px] items-center overflow-hidden bg-stone-950 text-white md:min-h-[430px]">
+        <div
+          className="absolute inset-0 scale-105 bg-cover bg-center opacity-45 blur-md"
+          style={{ backgroundImage: "url('/images/tenant-hero-toba.webp')" }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 bg-contain bg-top bg-no-repeat md:bg-center"
+          style={{ backgroundImage: "url('/images/tenant-hero-toba.webp')" }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-900/55 to-stone-900/10"
+          aria-hidden="true"
+        />
+        <div className="relative z-10 mx-auto w-full max-w-[908px] self-stretch px-6 pt-10 md:pt-14">
           <h1 className="text-4xl md:text-5xl font-bold font-serif tracking-tight">{punguan.name}</h1>
           {punguan.tagline && (
             <p className="mt-4 text-lg text-stone-300 max-w-2xl">{punguan.tagline}</p>
@@ -38,9 +46,13 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-6 py-12 space-y-12">
+      <div
+        className="bg-[#f8f4ec] bg-cover bg-top"
+        style={{ backgroundImage: "url('/images/tenant-content-texture.webp')" }}
+      >
+        <div className="mx-auto max-w-5xl space-y-12 px-6 py-12 md:py-16">
         {(punguan.about || punguan.description) && (
-          <section>
+          <section className="rounded-2xl border border-stone-200/80 bg-white/80 p-6 shadow-sm backdrop-blur-sm md:p-8">
             <h2 className="text-2xl font-bold font-serif text-stone-800 mb-4">Profil</h2>
             <p className="text-stone-700 whitespace-pre-wrap leading-relaxed max-w-3xl">
               {punguan.about || punguan.description}
@@ -146,6 +158,7 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
             </ul>
           </section>
         )}
+        </div>
       </div>
     </>
   );

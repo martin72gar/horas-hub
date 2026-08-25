@@ -1,6 +1,6 @@
 'use server';
 
-import { eq } from 'drizzle-orm';
+import { and, eq, ne } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { db } from '@/db';
 import { punguans } from '@/db/schema';
@@ -10,6 +10,29 @@ import { validateSlug } from '@/lib/tenant-slug';
 function trimOrNull(value: FormDataEntryValue | null) {
   const s = typeof value === 'string' ? value.trim() : '';
   return s === '' ? null : s;
+}
+
+export async function checkSlugAvailability(punguanId: string, value: string) {
+  try {
+    await verifyPengurusAccess(punguanId);
+
+    const slug = value.trim().toLowerCase();
+    const slugError = validateSlug(slug);
+    if (slugError) return { available: false, error: slugError };
+
+    const [existing] = await db
+      .select({ id: punguans.id })
+      .from(punguans)
+      .where(and(eq(punguans.slug, slug), ne(punguans.id, punguanId)))
+      .limit(1);
+
+    return existing
+      ? { available: false, error: 'Alamat tersebut sudah dipakai punguan lain.' }
+      : { available: true };
+  } catch (error: unknown) {
+    console.error(error);
+    return { available: false, error: 'Gagal memeriksa ketersediaan alamat.' };
+  }
 }
 
 export async function updateLandingSettings(punguanId: string, formData: FormData) {

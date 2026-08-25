@@ -22,5 +22,6 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+  // File publik harus langsung dilayani Next, bukan di-rewrite sebagai halaman tenant.
+  matcher: ['/((?!api|_next/static|_next/image|.*\\.[^/]+$).*)'],
 };

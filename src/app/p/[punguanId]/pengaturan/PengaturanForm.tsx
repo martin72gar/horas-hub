@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ExternalLink, Loader2 } from 'lucide-react';
-import { updateLandingSettings } from './actions';
+import { validateSlug } from '@/lib/tenant-slug';
+import { checkSlugAvailability, updateLandingSettings } from './actions';
 
 type Punguan = {
   id: string;
@@ -20,6 +21,11 @@ type Punguan = {
 const inputClass =
   'w-full px-3 py-2 border border-stone-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500';
 
+type SlugCheck = {
+  status: 'idle' | 'waiting' | 'checking' | 'available' | 'unavailable';
+  message?: string;
+};
+
 export default function PengaturanForm({
   punguan,
   rootDomain,
@@ -32,9 +38,62 @@ export default function PengaturanForm({
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [slugCheck, setSlugCheck] = useState<SlugCheck>(
+    punguan.slug
+      ? { status: 'available', message: 'Alamat ini sedang digunakan punguan Anda.' }
+      : { status: 'idle' }
+  );
 
   const protocol = rootDomain.startsWith('localhost') ? 'http' : 'https';
   const previewUrl = slug ? `${protocol}://${slug}.${rootDomain}` : null;
+
+  useEffect(() => {
+    const normalizedSlug = slug.trim().toLowerCase();
+    if (!normalizedSlug || validateSlug(normalizedSlug) || normalizedSlug === punguan.slug) return;
+
+    let cancelled = false;
+
+    const timer = window.setTimeout(async () => {
+      setSlugCheck({ status: 'checking', message: 'Memeriksa ketersediaan alamat…' });
+      const result = await checkSlugAvailability(punguan.id, normalizedSlug);
+      if (cancelled) return;
+
+      setSlugCheck(
+        result.available
+          ? { status: 'available', message: 'Alamat tersedia.' }
+          : { status: 'unavailable', message: result.error }
+      );
+    }, 3000);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [punguan.id, punguan.slug, slug]);
+
+  function handleSlugChange(value: string) {
+    const nextSlug = value.toLowerCase();
+    const normalizedSlug = nextSlug.trim();
+    setSlug(nextSlug);
+    setSaved(false);
+
+    if (!normalizedSlug) {
+      setSlugCheck({ status: 'idle' });
+      return;
+    }
+
+    const validationError = validateSlug(normalizedSlug);
+    if (validationError) {
+      setSlugCheck({ status: 'unavailable', message: validationError });
+      return;
+    }
+
+    setSlugCheck(
+      normalizedSlug === punguan.slug
+        ? { status: 'available', message: 'Alamat ini sedang digunakan punguan Anda.' }
+        : { status: 'waiting', message: 'Ketersediaan diperiksa setelah Anda berhenti mengetik.' }
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -78,7 +137,7 @@ export default function PengaturanForm({
               id="slug"
               name="slug"
               value={slug}
-              onChange={(e) => setSlug(e.target.value.toLowerCase())}
+              onChange={(e) => handleSlugChange(e.target.value)}
               placeholder="punguan-toba-jakarta"
               className={inputClass}
             />
@@ -87,6 +146,21 @@ export default function PengaturanForm({
           <p className="text-xs text-stone-500 mt-1">
             Huruf kecil, angka, dan tanda hubung saja.
           </p>
+          {slugCheck.status !== 'idle' && (
+            <p
+              aria-live="polite"
+              className={`mt-2 flex items-center gap-1.5 text-xs ${
+                slugCheck.status === 'available'
+                  ? 'text-green-700'
+                  : slugCheck.status === 'unavailable'
+                    ? 'text-red-700'
+                    : 'text-stone-500'
+              }`}
+            >
+              {slugCheck.status === 'checking' && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+              {slugCheck.message}
+            </p>
+          )}
           {previewUrl && punguan.landingPublished && punguan.slug === slug && (
             <a
               href={previewUrl}

@@ -47,13 +47,13 @@ export async function getPublicAnnouncements(punguanId: string, limit = 5) {
 }
 
 /** Nama + jabatan saja. Email/telepon pengurus sengaja tidak diekspos. */
-export async function getPengurus(punguanId: string) {
+export const getPengurus = cache(async (punguanId: string) => {
   return db
     .select({ name: users.name, role: punguanUsers.role })
     .from(punguanUsers)
     .innerJoin(users, eq(punguanUsers.userId, users.id))
     .where(eq(punguanUsers.punguanId, punguanId));
-}
+});
 
 /** Snapshot terbit saja — draft tidak pernah bocor ke publik. */
 export async function getPublishedStatutes(punguanId: string) {

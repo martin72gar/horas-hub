@@ -6,6 +6,7 @@ node_modules
 .claude
 .code-review-graph
 deploy
+Claude outputs
 scripts/*.sql
 .env*
 *.tsbuildinfo

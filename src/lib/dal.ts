@@ -83,6 +83,17 @@ export async function verifyPengurusAccess(punguanId: string) {
   return role;
 }
 
+/**
+ * Bendahara dan Superadmin boleh mencatat uang masuk/keluar (iuran, tabungan).
+ */
+export async function verifyBendaharaAccess(punguanId: string) {
+  const role = await verifyTenantAccess(punguanId);
+  if (role !== 'SUPERADMIN' && role !== 'BENDAHARA') {
+    throw new Error('Hanya Bendahara yang berhak melakukan tindakan ini.');
+  }
+  return role;
+}
+
 // --- Contoh Data Access Helper yang aman (Tenant-Scoped) ---
 
 export async function getHouseholds(punguanId: string) {

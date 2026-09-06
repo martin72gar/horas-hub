@@ -20,6 +20,8 @@ export const memberGenderEnum = pgEnum("member_gender", ["L", "P"]);
 export const billStatusEnum = pgEnum("bill_status", ["BELUM_BAYAR", "SEBAGIAN", "LUNAS"]);
 export const arisanStatusEnum = pgEnum("arisan_status", ["AKTIF", "SELESAI"]);
 export const statuteTypeEnum = pgEnum("statute_type", ["AD", "ART"]);
+export const tabunganFundStatusEnum = pgEnum("tabungan_fund_status", ["AKTIF", "SELESAI"]);
+export const tabunganTxTypeEnum = pgEnum("tabungan_tx_type", ["SETORAN", "PENGEMBALIAN", "PENGELUARAN", "TRANSFER", "PENYESUAIAN"]);
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -188,6 +190,60 @@ export const statuteArticles = pgTable("statute_articles", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Dana bertujuan, mis. "Dana Bona Taon 2027". Berbeda dengan iuran: setoran
+// bersifat sukarela, nominalnya bebas, dan ada bulan yang kosong.
+export const tabunganFunds = pgTable("tabungan_funds", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  punguanId: uuid("punguan_id").notNull().references(() => punguans.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  targetEvent: varchar("target_event", { length: 255 }),
+  targetYear: integer("target_year"),
+  targetAmount: integer("target_amount"),
+  // Rekening tempat dana disimpan (opsional, untuk rekap TRANSFER).
+  bankName: varchar("bank_name", { length: 100 }),
+  bankAccount: varchar("bank_account", { length: 100 }),
+  status: tabunganFundStatusEnum("status").default("AKTIF").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Buku besar satu dana: uang masuk (SETORAN) dan uang keluar (PENGEMBALIAN ke
+// anggota yang keluar, PENGELUARAN biaya). TRANSFER hanya memindahkan kas tunai
+// ke rekening, jadi tidak mengubah dana terkumpul. PENYESUAIAN untuk koreksi.
+export const tabunganTransactions = pgTable("tabungan_transactions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  fundId: uuid("fund_id").notNull().references(() => tabunganFunds.id, { onDelete: "cascade" }),
+  punguanId: uuid("punguan_id").notNull().references(() => punguans.id, { onDelete: "cascade" }),
+  // Keluarga penyetor / penerima pengembalian. null untuk TRANSFER & PENGELUARAN umum.
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "set null" }),
+  type: tabunganTxTypeEnum("type").notNull(),
+  // Rupiah. Positif untuk semua tipe; hanya PENYESUAIAN yang boleh negatif.
+  amount: integer("amount").notNull(),
+  transactionDate: date("transaction_date").notNull(),
+  // Periode untuk matriks rekap bulanan (mis. setoran Agustus 2026).
+  periodMonth: integer("period_month"),
+  periodYear: integer("period_year"),
+  description: text("description"),
+  recordedBy: uuid("recorded_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Pertemuan bulanan beserta tuan rumahnya, yang bergilir antar keluarga.
+export const meetings = pgTable("meetings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  punguanId: uuid("punguan_id").notNull().references(() => punguans.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }),
+  meetingDate: date("meeting_date"),
+  periodMonth: integer("period_month"),
+  periodYear: integer("period_year"),
+  hostHouseholdId: uuid("host_household_id").references(() => households.id, { onDelete: "set null" }),
+  // Dana yang setorannya dikumpulkan pada pertemuan ini (opsional).
+  fundId: uuid("fund_id").references(() => tabunganFunds.id, { onDelete: "set null" }),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type PengurusEntry = {
   jabatan: string;
   /** Wilayah komisaris, mis. "Cilincing-Kb Baru". */
@@ -230,6 +286,8 @@ export const punguansRelations = relations(punguans, ({ many }) => ({
   arisanGroups: many(arisanGroups),
   announcements: many(announcements),
   statutes: many(statutes),
+  tabunganFunds: many(tabunganFunds),
+  meetings: many(meetings),
 }));
 
 export const statutesRelations = relations(statutes, ({ one, many }) => ({
@@ -246,9 +304,28 @@ export const householdsRelations = relations(households, ({ one, many }) => ({
   members: many(members),
   iuranBills: many(iuranBills),
   arisanParticipants: many(arisanParticipants),
+  tabunganTransactions: many(tabunganTransactions),
 }));
 
 export const iuranBillsRelations = relations(iuranBills, ({ one, many }) => ({
   household: one(households, { fields: [iuranBills.householdId], references: [households.id] }),
   payments: many(iuranPayments),
+}));
+
+export const tabunganFundsRelations = relations(tabunganFunds, ({ one, many }) => ({
+  punguan: one(punguans, { fields: [tabunganFunds.punguanId], references: [punguans.id] }),
+  transactions: many(tabunganTransactions),
+  meetings: many(meetings),
+}));
+
+export const tabunganTransactionsRelations = relations(tabunganTransactions, ({ one }) => ({
+  fund: one(tabunganFunds, { fields: [tabunganTransactions.fundId], references: [tabunganFunds.id] }),
+  household: one(households, { fields: [tabunganTransactions.householdId], references: [households.id] }),
+  recorder: one(users, { fields: [tabunganTransactions.recordedBy], references: [users.id] }),
+}));
+
+export const meetingsRelations = relations(meetings, ({ one }) => ({
+  punguan: one(punguans, { fields: [meetings.punguanId], references: [punguans.id] }),
+  host: one(households, { fields: [meetings.hostHouseholdId], references: [households.id] }),
+  fund: one(tabunganFunds, { fields: [meetings.fundId], references: [tabunganFunds.id] }),
 }));

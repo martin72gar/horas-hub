@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import { setTuanRumah } from "../actions";
-import { NAMA_BULAN, type HouseholdOption } from "../SetoranDialog";
+import { NAMA_BULAN, type HouseholdOption } from "@/lib/tabungan";
 
 const inputClass =
   "w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-emerald-600 focus:border-emerald-600 rounded-md bg-white";

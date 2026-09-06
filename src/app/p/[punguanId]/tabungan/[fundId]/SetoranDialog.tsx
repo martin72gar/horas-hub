@@ -11,13 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { PlusCircle, Save } from "lucide-react";
 import { recordSetoran } from "./actions";
-
-export type HouseholdOption = { id: string; headName: string; status: string };
-
-export const NAMA_BULAN = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
-];
+import { NAMA_BULAN, type HouseholdOption } from "@/lib/tabungan";
 
 const inputClass =
   "w-full px-3 py-2 text-sm border border-stone-300 focus:ring-1 focus:ring-emerald-600 focus:border-emerald-600 rounded-md bg-white";

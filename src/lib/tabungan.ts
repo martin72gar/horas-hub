@@ -40,3 +40,10 @@ export function hitungRingkasan(rows: TotalPerTipe[]) {
     tunai: danaTerkumpul - rekening,
   };
 }
+
+export const NAMA_BULAN = [
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+];
+
+export type HouseholdOption = { id: string; headName: string; status: string };

@@ -8,8 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CalendarDays, PiggyBank } from "lucide-react";
 import { formatRupiah } from "@/lib/utils";
-import { hitungRingkasan, type TabunganTxType } from "@/lib/tabungan";
-import SetoranDialog, { NAMA_BULAN } from "./SetoranDialog";
+import { hitungRingkasan, NAMA_BULAN, type TabunganTxType } from "@/lib/tabungan";
+import SetoranDialog from "./SetoranDialog";
 import OutflowDialog from "./OutflowDialog";
 
 const BULAN = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -267,7 +267,7 @@ export default async function FundDetailPage({
                       );
                     })}
                     <td className="px-4 py-3 text-right font-semibold text-stone-900 whitespace-nowrap">
-                      {formatRupiah(totalBaris(h.id))}
+                      {totalBaris(h.id) === 0 ? <span className="text-stone-300">–</span> : formatRupiah(totalBaris(h.id))}
                     </td>
                   </tr>
                 ))

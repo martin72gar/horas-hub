@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { tabunganFunds, meetings, households } from "@/db/schema";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { ArrowLeft, Home } from "lucide-react";
-import { NAMA_BULAN } from "../SetoranDialog";
+import { NAMA_BULAN } from "@/lib/tabungan";
 import PertemuanForm from "./PertemuanForm";
 
 export default async function PertemuanPage({

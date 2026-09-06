@@ -34,9 +34,9 @@ export async function createFund(punguanId: string, formData: FormData) {
     }
 
     await db.insert(tabunganFunds).values({ punguanId, ...values });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
-    return { error: error.message || "Gagal menyimpan dana." };
+    return { error: error instanceof Error ? error.message : "Gagal menyimpan dana." };
   }
 
   revalidatePath(`/p/${punguanId}/tabungan`);
@@ -55,9 +55,9 @@ export async function updateFund(punguanId: string, fundId: string, formData: Fo
     await db.update(tabunganFunds)
       .set({ ...values, updatedAt: new Date() })
       .where(and(eq(tabunganFunds.id, fundId), eq(tabunganFunds.punguanId, punguanId)));
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
-    return { error: error.message || "Gagal menyimpan dana." };
+    return { error: error instanceof Error ? error.message : "Gagal menyimpan dana." };
   }
 
   revalidatePath(`/p/${punguanId}/tabungan`);

@@ -38,9 +38,57 @@ export async function recordSetoran(punguanId: string, fundId: string, formData:
       description: (formData.get("description") as string)?.trim() || null,
       recordedBy: session?.user?.id ?? null,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
-    return { error: error.message || "Gagal mencatat setoran." };
+    return { error: error instanceof Error ? error.message : "Gagal mencatat setoran." };
+  }
+
+  revalidatePath(`/p/${punguanId}/tabungan/${fundId}`);
+  revalidatePath(`/p/${punguanId}/tabungan`);
+}
+
+const TIPE_KELUAR = ["PENGEMBALIAN", "PENGELUARAN", "TRANSFER", "PENYESUAIAN"] as const;
+type TipeKeluar = (typeof TIPE_KELUAR)[number];
+
+export async function recordOutflow(punguanId: string, fundId: string, formData: FormData) {
+  try {
+    await verifyBendaharaAccess(punguanId);
+
+    const type = formData.get("type") as TipeKeluar;
+    const householdId = (formData.get("householdId") as string) || null;
+    const amount = parseInt(formData.get("amount") as string, 10);
+    const transactionDate = (formData.get("transactionDate") as string) || hariIni();
+
+    if (!TIPE_KELUAR.includes(type)) return { error: "Jenis transaksi tidak valid." };
+    if (type === "PENGEMBALIAN" && !householdId) {
+      return { error: "Pengembalian harus ditujukan ke satu keluarga." };
+    }
+    if (!Number.isFinite(amount)) return { error: "Nominal tidak valid." };
+    // ponytail: PENYESUAIAN satu-satunya tipe yang boleh minus, supaya koreksi
+    // ke bawah tidak butuh kolom tanda sendiri dan rumus dana terkumpul tetap
+    // satu baris. Tipe lain arahnya sudah ditentukan oleh `type`.
+    if (type === "PENYESUAIAN" ? amount === 0 : amount <= 0) {
+      return { error: "Nominal harus lebih besar dari nol." };
+    }
+
+    const session = await getCurrentSession();
+    const tanggal = new Date(transactionDate);
+
+    await db.insert(tabunganTransactions).values({
+      fundId,
+      punguanId,
+      householdId: type === "PENGEMBALIAN" ? householdId : null,
+      type,
+      amount,
+      transactionDate,
+      periodMonth: tanggal.getUTCMonth() + 1,
+      periodYear: tanggal.getUTCFullYear(),
+      description: (formData.get("description") as string)?.trim() || null,
+      recordedBy: session?.user?.id ?? null,
+    });
+  } catch (error) {
+    console.error(error);
+    return { error: error instanceof Error ? error.message : "Gagal mencatat transaksi." };
   }
 
   revalidatePath(`/p/${punguanId}/tabungan/${fundId}`);

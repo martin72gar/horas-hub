@@ -1,0 +1,14 @@
+# Dipakai di VPS: docker compose -f deploy/docker-compose.yml up -d
+# IMAGE_TAG = commit SHA. Rollback: IMAGE_TAG=<sha-lama> docker compose ... up -d
+services:
+  app:
+    image: ghcr.io/martin72gar/horas-hub:${IMAGE_TAG:?IMAGE_TAG wajib diisi}
+    container_name: horashub
+    restart: unless-stopped
+    # Hanya localhost: Nginx yang meneruskan dari 443. VPS ini juga menjalankan app lain
+    # (rasor di 3000, nirmala di 5000), jadi HorasHub pakai 3001.
+    # Kalau APP_PORT diubah, ubah juga proxy_pass di deploy/nginx-punguan.conf.
+    ports:
+      - "127.0.0.1:${APP_PORT:-3001}:3000"
+    env_file:
+      - /etc/horashub/app.env

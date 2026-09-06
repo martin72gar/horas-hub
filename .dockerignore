@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.github
+.vercel
+.claude
+.code-review-graph
+deploy
+scripts/*.sql
+.env*
+*.tsbuildinfo
+npm-debug.log*

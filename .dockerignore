@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.github
+.vercel
+.open-next
+.wrangler
+.claude
+.code-review-graph
+deploy
+Claude outputs
+scripts/*.sql
+.env*
+*.tsbuildinfo
+npm-debug.log*

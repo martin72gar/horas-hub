@@ -34,8 +34,15 @@ yarn-error.log*
 .env*
 
 # vercel
+# cloudflare (opennext)
+.open-next/
+.wrangler/
+
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scratch: prompts, draft schemas, sample data with real member info — local only
+/Claude outputs/

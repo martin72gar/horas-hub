@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { punguans } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { LayoutDashboard, Users, CreditCard, Gift, Megaphone, FileText, ScrollText, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, CreditCard, Gift, PiggyBank, Megaphone, FileText, ScrollText, Settings, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Logo from "@/components/Logo";
 
@@ -44,6 +44,7 @@ export default async function PunguanLayout({
     { name: "Daftar KK", href: `/p/${punguanId}/kk`, icon: Users },
     { name: "Iuran", href: `/p/${punguanId}/iuran`, icon: CreditCard },
     { name: "Arisan", href: `/p/${punguanId}/arisan`, icon: Gift },
+    { name: "Tabungan", href: `/p/${punguanId}/tabungan`, icon: PiggyBank },
     { name: "Pengumuman", href: `/p/${punguanId}/pengumuman`, icon: Megaphone },
     { name: "Laporan", href: `/p/${punguanId}/laporan`, icon: FileText },
     { name: "AD/ART", href: `/p/${punguanId}/ad-art`, icon: ScrollText },

@@ -19,7 +19,7 @@ type Punguan = {
 };
 
 const inputClass =
-  'w-full px-3 py-2 border border-stone-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500';
+  'min-h-11 w-full rounded-md border border-stone-300 px-3 py-2 text-base focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 sm:text-sm';
 
 type SlugCheck = {
   status: 'idle' | 'waiting' | 'checking' | 'available' | 'unavailable';
@@ -125,14 +125,14 @@ export default function PengaturanForm({
         </p>
       )}
 
-      <section className="bg-white border border-stone-200 rounded-xl p-6 space-y-4 shadow-sm">
+      <section className="space-y-4 rounded-xl border border-stone-200 bg-white p-4 shadow-sm sm:p-6">
         <h3 className="font-semibold text-stone-800">Alamat &amp; Status</h3>
 
         <div>
           <label htmlFor="slug" className="block text-sm font-medium text-stone-700 mb-1">
             Alamat landing page
           </label>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <input
               id="slug"
               name="slug"
@@ -141,7 +141,7 @@ export default function PengaturanForm({
               placeholder="punguan-toba-jakarta"
               className={inputClass}
             />
-            <span className="text-sm text-stone-500 whitespace-nowrap">.{rootDomain}</span>
+            <span className="break-all text-sm text-stone-500 sm:whitespace-nowrap">.{rootDomain}</span>
           </div>
           <p className="text-xs text-stone-500 mt-1">
             Huruf kecil, angka, dan tanda hubung saja.
@@ -189,7 +189,7 @@ export default function PengaturanForm({
         </label>
       </section>
 
-      <section className="bg-white border border-stone-200 rounded-xl p-6 space-y-4 shadow-sm">
+      <section className="space-y-4 rounded-xl border border-stone-200 bg-white p-4 shadow-sm sm:p-6">
         <h3 className="font-semibold text-stone-800">Profil Publik</h3>
 
         <div>
@@ -221,7 +221,7 @@ export default function PengaturanForm({
         </div>
       </section>
 
-      <section className="bg-white border border-stone-200 rounded-xl p-6 space-y-4 shadow-sm">
+      <section className="space-y-4 rounded-xl border border-stone-200 bg-white p-4 shadow-sm sm:p-6">
         <h3 className="font-semibold text-stone-800">Kontak</h3>
         <p className="text-xs text-stone-500 -mt-2">
           Ini tampil publik. Gunakan kontak resmi punguan, bukan nomor pribadi pengurus.
@@ -252,7 +252,7 @@ export default function PengaturanForm({
       <button
         type="submit"
         disabled={isPending}
-        className="inline-flex items-center gap-2 bg-red-800 hover:bg-red-900 disabled:opacity-60 text-white text-sm font-medium px-5 py-2.5 rounded-md shadow-sm transition-colors"
+        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-red-800 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-900 disabled:opacity-60 sm:w-auto"
       >
         {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
         Simpan Pengaturan

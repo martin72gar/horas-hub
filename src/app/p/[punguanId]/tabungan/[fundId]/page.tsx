@@ -6,11 +6,12 @@ import { tabunganFunds, tabunganTransactions, households, users, meetings } from
 import { and, asc, desc, eq, sql, type SQL } from "drizzle-orm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CalendarDays, PiggyBank } from "lucide-react";
+import { ArrowLeft, PiggyBank } from "lucide-react";
 import { formatRupiah } from "@/lib/utils";
 import { hitungRingkasan, NAMA_BULAN, type TabunganTxType } from "@/lib/tabungan";
 import SetoranDialog from "./SetoranDialog";
 import OutflowDialog from "./OutflowDialog";
+import RekapSetoranTable from "./RekapSetoranTable";
 
 const BULAN = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
@@ -96,13 +97,6 @@ export default async function FundDetailPage({
     ...semuaKK.filter((h) => h.status !== "AKTIF" && punyaRiwayat.has(h.id)),
   ];
 
-  const sel = (householdId: string, bulan: number) =>
-    setoranRows.find((r) => r.householdId === householdId && r.periodMonth === bulan)?.total ?? null;
-  const totalBaris = (householdId: string) =>
-    setoranRows.filter((r) => r.householdId === householdId).reduce((a, r) => a + r.total, 0);
-  const totalBulan = (bulan: number) =>
-    setoranRows.filter((r) => r.periodMonth === bulan).reduce((a, r) => a + r.total, 0);
-  const totalTahun = setoranRows.reduce((a, r) => a + r.total, 0);
 
   // Buku besar, dengan filter opsional lewat query string (tanpa JavaScript).
   const filterLedger: SQL[] = [eq(tabunganTransactions.fundId, fundId)];
@@ -202,91 +196,15 @@ export default async function FundDetailPage({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
-        <div className="p-5 border-b border-stone-200 bg-stone-50/50 flex flex-col md:flex-row justify-between items-center gap-4">
-          <h3 className="text-lg font-semibold text-stone-800">Rekap Setoran {tahun}</h3>
-          <div className="flex flex-wrap items-center gap-1.5">
-            <Link href={`/p/${punguanId}/tabungan/${fundId}/pertemuan`}>
-              <Button variant="outline" size="sm" className="border-stone-300 text-stone-700 hover:bg-stone-50 mr-2">
-                <CalendarDays className="h-4 w-4 mr-1.5" /> Tuan Rumah
-              </Button>
-            </Link>
-            {daftarTahun.map((y) => (
-              <Link
-                key={y}
-                href={`/p/${punguanId}/tabungan/${fundId}?tahun=${y}`}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium border transition-colors ${
-                  y === tahun
-                    ? "bg-emerald-700 text-white border-emerald-700"
-                    : "bg-white text-stone-600 border-stone-300 hover:bg-stone-50"
-                }`}
-              >
-                {y}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-stone-600 bg-stone-100/80 border-b border-stone-200 uppercase font-semibold">
-              <tr>
-                <th className="px-4 py-3 sticky left-0 bg-stone-100/80 min-w-[180px]">Nama KK</th>
-                {BULAN.map((b) => {
-                  const host = tuanRumah.find((m) => m.periodMonth === b)?.hostName;
-                  return (
-                    <th key={b} className="px-3 py-3 text-right whitespace-nowrap align-bottom">
-                      <div>{NAMA_BULAN[b - 1].slice(0, 3)}</div>
-                      {host && <div className="font-normal normal-case text-[10px] text-stone-400 max-w-[110px] truncate ml-auto">{host}</div>}
-                    </th>
-                  );
-                })}
-                <th className="px-4 py-3 text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-stone-200">
-              {barisKK.length === 0 ? (
-                <tr>
-                  <td colSpan={14} className="px-6 py-8 text-center text-stone-500">
-                    Belum ada keluarga terdaftar.
-                  </td>
-                </tr>
-              ) : (
-                barisKK.map((h) => (
-                  <tr key={h.id} className="hover:bg-stone-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-stone-900 sticky left-0 bg-white">
-                      {h.headName}
-                      {h.status !== "AKTIF" && <span className="ml-2 text-xs text-stone-400">({h.status})</span>}
-                    </td>
-                    {BULAN.map((b) => {
-                      const nilai = sel(h.id, b);
-                      return (
-                        <td key={b} className="px-3 py-3 text-right text-stone-600 whitespace-nowrap">
-                          {nilai === null ? <span className="text-stone-300">–</span> : formatRupiah(nilai)}
-                        </td>
-                      );
-                    })}
-                    <td className="px-4 py-3 text-right font-semibold text-stone-900 whitespace-nowrap">
-                      {totalBaris(h.id) === 0 ? <span className="text-stone-300">–</span> : formatRupiah(totalBaris(h.id))}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-            <tfoot className="bg-stone-50 border-t-2 border-stone-300 font-semibold text-stone-800">
-              <tr>
-                <td className="px-4 py-3 sticky left-0 bg-stone-50">Total per Bulan</td>
-                {BULAN.map((b) => (
-                  <td key={b} className="px-3 py-3 text-right whitespace-nowrap">
-                    {totalBulan(b) === 0 ? <span className="text-stone-300">–</span> : formatRupiah(totalBulan(b))}
-                  </td>
-                ))}
-                <td className="px-4 py-3 text-right whitespace-nowrap">{formatRupiah(totalTahun)}</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
+      <RekapSetoranTable
+        punguanId={punguanId}
+        fundId={fundId}
+        year={tahun}
+        availableYears={daftarTahun}
+        households={barisKK}
+        setoranRows={setoranRows}
+        hosts={tuanRumah}
+      />
 
       <div className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
         <div className="p-5 border-b border-stone-200 bg-stone-50/50 flex flex-col lg:flex-row justify-between lg:items-center gap-4">

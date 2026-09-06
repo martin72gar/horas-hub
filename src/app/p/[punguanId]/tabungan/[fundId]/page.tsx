@@ -2,11 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { verifyTenantAccess } from "@/lib/dal";
 import { db } from "@/db";
-import { tabunganFunds, tabunganTransactions, households, users } from "@/db/schema";
+import { tabunganFunds, tabunganTransactions, households, users, meetings } from "@/db/schema";
 import { and, asc, desc, eq, sql, type SQL } from "drizzle-orm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, PiggyBank } from "lucide-react";
+import { ArrowLeft, CalendarDays, PiggyBank } from "lucide-react";
 import { formatRupiah } from "@/lib/utils";
 import { hitungRingkasan, type TabunganTxType } from "@/lib/tabungan";
 import SetoranDialog, { NAMA_BULAN } from "./SetoranDialog";
@@ -70,6 +70,15 @@ export default async function FundDetailPage({
     eq(tabunganTransactions.periodYear, tahun),
   ))
   .groupBy(tabunganTransactions.householdId, tabunganTransactions.periodMonth);
+
+  // Tuan rumah per bulan, ditampilkan di header matriks.
+  const tuanRumah = await db.select({
+    periodMonth: meetings.periodMonth,
+    hostName: households.headName,
+  })
+  .from(meetings)
+  .leftJoin(households, eq(meetings.hostHouseholdId, households.id))
+  .where(and(eq(meetings.fundId, fundId), eq(meetings.periodYear, tahun)));
 
   const semuaKK = await db.select({
     id: households.id,
@@ -196,7 +205,12 @@ export default async function FundDetailPage({
       <div className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
         <div className="p-5 border-b border-stone-200 bg-stone-50/50 flex flex-col md:flex-row justify-between items-center gap-4">
           <h3 className="text-lg font-semibold text-stone-800">Rekap Setoran {tahun}</h3>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Link href={`/p/${punguanId}/tabungan/${fundId}/pertemuan`}>
+              <Button variant="outline" size="sm" className="border-stone-300 text-stone-700 hover:bg-stone-50 mr-2">
+                <CalendarDays className="h-4 w-4 mr-1.5" /> Tuan Rumah
+              </Button>
+            </Link>
             {daftarTahun.map((y) => (
               <Link
                 key={y}
@@ -218,9 +232,15 @@ export default async function FundDetailPage({
             <thead className="text-xs text-stone-600 bg-stone-100/80 border-b border-stone-200 uppercase font-semibold">
               <tr>
                 <th className="px-4 py-3 sticky left-0 bg-stone-100/80 min-w-[180px]">Nama KK</th>
-                {BULAN.map((b) => (
-                  <th key={b} className="px-3 py-3 text-right whitespace-nowrap">{NAMA_BULAN[b - 1].slice(0, 3)}</th>
-                ))}
+                {BULAN.map((b) => {
+                  const host = tuanRumah.find((m) => m.periodMonth === b)?.hostName;
+                  return (
+                    <th key={b} className="px-3 py-3 text-right whitespace-nowrap align-bottom">
+                      <div>{NAMA_BULAN[b - 1].slice(0, 3)}</div>
+                      {host && <div className="font-normal normal-case text-[10px] text-stone-400 max-w-[110px] truncate ml-auto">{host}</div>}
+                    </th>
+                  );
+                })}
                 <th className="px-4 py-3 text-right">Total</th>
               </tr>
             </thead>

@@ -1,8 +1,9 @@
 "use server"
 
 import { db } from "@/db";
-import { tabunganTransactions } from "@/db/schema";
+import { meetings, tabunganTransactions } from "@/db/schema";
 import { getCurrentSession, verifyBendaharaAccess } from "@/lib/dal";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 /** Tanggal hari ini dalam format kolom `date` Postgres. */
@@ -93,4 +94,48 @@ export async function recordOutflow(punguanId: string, fundId: string, formData:
 
   revalidatePath(`/p/${punguanId}/tabungan/${fundId}`);
   revalidatePath(`/p/${punguanId}/tabungan`);
+}
+
+/**
+ * Tuan rumah bergilir per bulan. Satu pertemuan per dana per periode: kalau
+ * periodenya sudah ada, barisnya diperbarui, bukan ditambah.
+ */
+export async function setTuanRumah(punguanId: string, fundId: string, formData: FormData) {
+  try {
+    await verifyBendaharaAccess(punguanId);
+
+    const hostHouseholdId = (formData.get("hostHouseholdId") as string) || null;
+    const periodMonth = parseInt(formData.get("periodMonth") as string, 10);
+    const periodYear = parseInt(formData.get("periodYear") as string, 10);
+
+    if (!Number.isFinite(periodMonth) || periodMonth < 1 || periodMonth > 12) return { error: "Bulan tidak valid." };
+    if (!Number.isFinite(periodYear) || periodYear < 2000 || periodYear > 2100) return { error: "Tahun tidak valid." };
+
+    const values = {
+      hostHouseholdId,
+      title: (formData.get("title") as string)?.trim() || null,
+      meetingDate: (formData.get("meetingDate") as string) || null,
+      notes: (formData.get("notes") as string)?.trim() || null,
+    };
+
+    const [existing] = await db.select({ id: meetings.id }).from(meetings)
+      .where(and(
+        eq(meetings.fundId, fundId),
+        eq(meetings.periodMonth, periodMonth),
+        eq(meetings.periodYear, periodYear),
+      ))
+      .limit(1);
+
+    if (existing) {
+      await db.update(meetings).set(values).where(eq(meetings.id, existing.id));
+    } else {
+      await db.insert(meetings).values({ punguanId, fundId, periodMonth, periodYear, ...values });
+    }
+  } catch (error) {
+    console.error(error);
+    return { error: error instanceof Error ? error.message : "Gagal menyimpan tuan rumah." };
+  }
+
+  revalidatePath(`/p/${punguanId}/tabungan/${fundId}/pertemuan`);
+  revalidatePath(`/p/${punguanId}/tabungan/${fundId}`);
 }

@@ -3,6 +3,8 @@ node_modules
 .git
 .github
 .vercel
+.open-next
+.wrangler
 .claude
 .code-review-graph
 deploy
